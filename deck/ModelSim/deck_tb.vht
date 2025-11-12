@@ -34,7 +34,7 @@ ARCHITECTURE Behaviour OF testbench IS
    SIGNAL CARD: STD_LOGIC_VECTOR(3 DOWNTO 0);
 
    -- Testbench state
-   TYPE T_STATE IS (S1, S2, S3, S4);
+   TYPE T_STATE IS (S1, S2, S3, S4, S5);
    SIGNAL STATE: T_STATE;
 
 BEGIN
@@ -62,6 +62,15 @@ BEGIN
             STATE <= S2;
             SHUFFLE_START <= '0';
          ELSIF (STATE = S2 AND SHUFFLE_READY = '1') THEN
+            STATE <= S3;
+         ELSIF (STATE = S3 AND CARD_READY = '1') THEN
+            CARD_START <= '1';
+         ELSIF (STATE = S3 AND CARD_READY = '0') THEN
+            STATE <= S4;
+            CARD_START <= '0';
+         ELSIF (STATE = S4 AND CARD_READY = '1') THEN
+            STATE <= S5;
+         ELSIF (STATE = S5) THEN
             STATE <= S3;
          END IF;
       END IF;

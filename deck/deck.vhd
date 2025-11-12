@@ -35,7 +35,7 @@ ARCHITECTURE Behaviour OF deck IS
 	END COMPONENT;
 
 	-- Deck states
-	TYPE T_STATE IS (S_RESET, S_SHUFFLE_START, S_LFSR_SETTING, S_LFSR_SET, S_LOADED_UNSHUFFLED, S_SHUFFLED, S_LFSR_SHIFT_START, S_LFSR_SHIFTING);
+	TYPE T_STATE IS (S_RESET, S_SHUFFLE_START, S_LFSR_SETTING, S_LFSR_SET, S_LOADED_UNSHUFFLED, S_SHUFFLED, S_LFSR_SHIFT_START, S_LFSR_SHIFTING, S_CARD_START, S_CARD_GETTING, S_CARD_READY);
 	SIGNAL STATE: T_STATE := S_RESET;
 
 	-- Signals to connect to lfsr
@@ -107,6 +107,7 @@ ARCHITECTURE Behaviour OF deck IS
 	
 	SIGNAL SHUFFLED_INDEX: INTEGER := 0;
 
+
 BEGIN
 	-- lfsr and circular counter instances
 	lfsr: lfsr_circular_counter GENERIC MAP (MODE => '0') PORT MAP (CLK, LFSR_SET_START, LFSR_SET_READY, LFSR_SET_VAL, LFSR_SHIFT_START, LFSR_SHIFT_READY, LFSR_OUTPUT);
@@ -137,6 +138,7 @@ BEGIN
 				IF (SHUFFLED_INDEX > 51) THEN
 					STATE <= S_SHUFFLED;
 					SHUFFLE_READY <= '1';
+					SHUFFLED_INDEX <= 0; -- Use shuffled index to pull out the cards from the shuffled deck
 				ELSE
 					STATE <= S_LFSR_SHIFT_START; -- Else initiate shift of lfsr
 					LFSR_SHIFT_START <= '1';
@@ -149,6 +151,18 @@ BEGIN
 			ELSIF (STATE = S_LFSR_SHIFTING AND LFSR_SHIFT_READY = '1') THEN -- lfsr done shifting, add the new one to deck
 				STATE <= S_LFSR_SET;
 
+			ELSIF ((STATE = S_SHUFFLED OR STATE = S_CARD_READY) AND CARD_START = '1') THEN -- Requested to get a new card
+				STATE <= S_CARD_START;
+				CARD_READY <= '0';
+			
+			ELSIF (STATE = S_CARD_START AND CARD_START = '0') THEN -- Intermediate stage of getting card
+				STATE <= S_CARD_GETTING;
+				CARD <= SHUFFLED_CARDS(SHUFFLED_INDEX);
+				SHUFFLED_INDEX <= SHUFFLED_INDEX + 1;
+				
+			ELSIF (STATE = S_CARD_GETTING) THEN -- Card ready
+				STATE <= S_CARD_READY;
+				CARD_READY <= '1';
 			END IF;
 		END IF;
 	END PROCESS;
