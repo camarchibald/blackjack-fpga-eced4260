@@ -6,6 +6,7 @@ add wave -noupdate -divider DECK_INOUT
 add wave -noupdate -label CLK /testbench/CLK
 add wave -noupdate -label SEED -radix unsigned /testbench/SEED
 add wave -noupdate -label CARD -radix unsigned /testbench/CARD
+add wave -noupdate -label CARD_OVERFLOW /testbench/CARD_OVERFLOW
 
 add wave -noupdate -divider STATES
 add wave -noupdate -label TB_STATE -format literal /testbench/STATE

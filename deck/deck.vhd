@@ -12,13 +12,17 @@ USE IEEE.std_logic_1164.ALL;
 USE IEEE.numeric_std.all;  
 
 ENTITY deck IS
+	GENERIC (LFSR_MAX_BIT: INTEGER := 5;
+				CARD_MAX_BIT: INTEGER := 3);
 	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock							
 				SHUFFLE_START: IN STD_LOGIC; -- Initiate shuffling					
 				SHUFFLE_READY: OUT STD_LOGIC := '1'; -- Low until shuffling complete
-				SEED: IN STD_LOGIC_VECTOR(5 DOWNTO 0); -- Seed to initialize lfsr
+				SEED: IN STD_LOGIC_VECTOR(LFSR_MAX_BIT DOWNTO 0); -- Seed to initialize lfsr
 				CARD_START: IN STD_LOGIC; -- Initiate drawing card
 				CARD_READY: OUT STD_LOGIC := '1'; -- Low until card value ready
-				CARD: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)); -- Card value			
+				CARD: OUT STD_LOGIC_VECTOR(CARD_MAX_BIT DOWNTO 0); -- Card value
+				CARD_OVERFLOW: OUT STD_LOGIC := '0'); -- 1 if the user requests too many cards from the deck
+							
 END ENTITY;
 
 ARCHITECTURE Behaviour OF deck IS
@@ -33,6 +37,9 @@ ARCHITECTURE Behaviour OF deck IS
 				OUTPUT: BUFFER STD_LOGIC_VECTOR(HIGH_BIT DOWNTO 0)); -- Value of generator
 	END COMPONENT;
 
+	-- 52 cards
+	CONSTANT MAX_CARD: INTEGER := 51;
+
 	-- Deck states
 	TYPE T_STATE IS (S_RESET, S_SHUFFLE_START, S_LFSR_SETTING, S_LFSR_SET, S_SHUFFLED_CHECK, S_SHUFFLED, S_LFSR_SHIFT_START, S_LFSR_SHIFTING, S_CARD_GETTING);
 	SIGNAL STATE: T_STATE := S_RESET;
@@ -40,76 +47,73 @@ ARCHITECTURE Behaviour OF deck IS
 	-- Signals to connect to lfsr
 	SIGNAL LFSR_SET_START, LFSR_SHIFT_START: STD_LOGIC := '0'; -- Initial zero (don't start anything)
 	SIGNAL LFSR_SET_READY, LFSR_SHIFT_READY: STD_LOGIC;
-	SIGNAL LFSR_SET_VAL, LFSR_OUTPUT: STD_LOGIC_VECTOR(5 DOWNTO 0);
+	SIGNAL LFSR_SET_VAL, LFSR_OUTPUT: STD_LOGIC_VECTOR(LFSR_MAX_BIT DOWNTO 0);
 
-	-- Holds 1 if the card in that position from the unshuffled deck in that position has been used already
-	TYPE T_USED_UNSHIFFLED_CARDS IS ARRAY(0 TO 51) OF STD_LOGIC;
-	SIGNAL USED_UNSHUFFLED_CARDS: T_USED_UNSHIFFLED_CARDS := (OTHERS => '0');
-
-	-- Array of unshuffled cards (in order), and array of shuffled cards (cards being placed in the deck)
-	TYPE T_CARDS IS ARRAY(0 TO 51) OF STD_LOGIC_VECTOR(3 DOWNTO 0);
+	-- Array of unshuffled cards (in order), and array of shuffled cards (the deck)
+	TYPE T_CARDS IS ARRAY(0 TO MAX_CARD) OF STD_LOGIC_VECTOR(CARD_MAX_BIT DOWNTO 0);
 	SIGNAL SHUFFLED_CARDS : T_CARDS;
 	CONSTANT UNSHUFFLED_CARDS : T_CARDS := (
-		0 => STD_LOGIC_VECTOR(to_unsigned(1, 4)),
-		1 => STD_LOGIC_VECTOR(to_unsigned(2, 4)),
-		2 => STD_LOGIC_VECTOR(to_unsigned(3, 4)),
-		3 => STD_LOGIC_VECTOR(to_unsigned(4, 4)),
-		4 => STD_LOGIC_VECTOR(to_unsigned(5, 4)),
-		5 => STD_LOGIC_VECTOR(to_unsigned(6, 4)),
-		6 => STD_LOGIC_VECTOR(to_unsigned(7, 4)),
-		7 => STD_LOGIC_VECTOR(to_unsigned(8, 4)),
-		8 => STD_LOGIC_VECTOR(to_unsigned(9, 4)),
-		9 => STD_LOGIC_VECTOR(to_unsigned(10, 4)),
-		10 => STD_LOGIC_VECTOR(to_unsigned(11, 4)),
-		11 => STD_LOGIC_VECTOR(to_unsigned(12, 4)),
-		12 => STD_LOGIC_VECTOR(to_unsigned(13, 4)),
-		13 => STD_LOGIC_VECTOR(to_unsigned(1, 4)),
-		14 => STD_LOGIC_VECTOR(to_unsigned(2, 4)),
-		15 => STD_LOGIC_VECTOR(to_unsigned(3, 4)),
-		16 => STD_LOGIC_VECTOR(to_unsigned(4, 4)),
-		17 => STD_LOGIC_VECTOR(to_unsigned(5, 4)),
-		18 => STD_LOGIC_VECTOR(to_unsigned(6, 4)),
-		19 => STD_LOGIC_VECTOR(to_unsigned(7, 4)),
-		20 => STD_LOGIC_VECTOR(to_unsigned(8, 4)),
-		21 => STD_LOGIC_VECTOR(to_unsigned(9, 4)),
-		22 => STD_LOGIC_VECTOR(to_unsigned(10, 4)),
-		23 => STD_LOGIC_VECTOR(to_unsigned(11, 4)),
-		24 => STD_LOGIC_VECTOR(to_unsigned(12, 4)),
-		25 => STD_LOGIC_VECTOR(to_unsigned(13, 4)),
-		26 => STD_LOGIC_VECTOR(to_unsigned(1, 4)),
-		27 => STD_LOGIC_VECTOR(to_unsigned(2, 4)),
-		28 => STD_LOGIC_VECTOR(to_unsigned(3, 4)),
-		29 => STD_LOGIC_VECTOR(to_unsigned(4, 4)),
-		30 => STD_LOGIC_VECTOR(to_unsigned(5, 4)),
-		31 => STD_LOGIC_VECTOR(to_unsigned(6, 4)),
-		32 => STD_LOGIC_VECTOR(to_unsigned(7, 4)),
-		33 => STD_LOGIC_VECTOR(to_unsigned(8, 4)),
-		34 => STD_LOGIC_VECTOR(to_unsigned(9, 4)),
-		35 => STD_LOGIC_VECTOR(to_unsigned(10, 4)),
-		36 => STD_LOGIC_VECTOR(to_unsigned(11, 4)),
-		37 => STD_LOGIC_VECTOR(to_unsigned(12, 4)),
-		38 => STD_LOGIC_VECTOR(to_unsigned(13, 4)),
-		39 => STD_LOGIC_VECTOR(to_unsigned(1, 4)),
-		40 => STD_LOGIC_VECTOR(to_unsigned(2, 4)),
-		41 => STD_LOGIC_VECTOR(to_unsigned(3, 4)),
-		42 => STD_LOGIC_VECTOR(to_unsigned(4, 4)),
-		43 => STD_LOGIC_VECTOR(to_unsigned(5, 4)),
-		44 => STD_LOGIC_VECTOR(to_unsigned(6, 4)),
-		45 => STD_LOGIC_VECTOR(to_unsigned(7, 4)),
-		46 => STD_LOGIC_VECTOR(to_unsigned(8, 4)),
-		47 => STD_LOGIC_VECTOR(to_unsigned(9, 4)),
-		48 => STD_LOGIC_VECTOR(to_unsigned(10, 4)),
-		49 => STD_LOGIC_VECTOR(to_unsigned(11, 4)),
-		50 => STD_LOGIC_VECTOR(to_unsigned(12, 4)),
-		51 => STD_LOGIC_VECTOR(to_unsigned(13, 4))
+		0  => STD_LOGIC_VECTOR(to_unsigned(1 , CARD_MAX_BIT + 1)),
+		1  => STD_LOGIC_VECTOR(to_unsigned(2 , CARD_MAX_BIT + 1)),
+		2  => STD_LOGIC_VECTOR(to_unsigned(3 , CARD_MAX_BIT + 1)),
+		3  => STD_LOGIC_VECTOR(to_unsigned(4 , CARD_MAX_BIT + 1)),
+		4  => STD_LOGIC_VECTOR(to_unsigned(5 , CARD_MAX_BIT + 1)),
+		5  => STD_LOGIC_VECTOR(to_unsigned(6 , CARD_MAX_BIT + 1)),
+		6  => STD_LOGIC_VECTOR(to_unsigned(7 , CARD_MAX_BIT + 1)),
+		7  => STD_LOGIC_VECTOR(to_unsigned(8,  CARD_MAX_BIT + 1)),
+		8  => STD_LOGIC_VECTOR(to_unsigned(9 , CARD_MAX_BIT + 1)),
+		9  => STD_LOGIC_VECTOR(to_unsigned(10, CARD_MAX_BIT + 1)),
+		10 => STD_LOGIC_VECTOR(to_unsigned(11, CARD_MAX_BIT + 1)),
+		11 => STD_LOGIC_VECTOR(to_unsigned(12, CARD_MAX_BIT + 1)),
+		12 => STD_LOGIC_VECTOR(to_unsigned(13, CARD_MAX_BIT + 1)),
+		13 => STD_LOGIC_VECTOR(to_unsigned(1 , CARD_MAX_BIT + 1)),
+		14 => STD_LOGIC_VECTOR(to_unsigned(2 , CARD_MAX_BIT + 1)),
+		15 => STD_LOGIC_VECTOR(to_unsigned(3 , CARD_MAX_BIT + 1)),
+		16 => STD_LOGIC_VECTOR(to_unsigned(4 , CARD_MAX_BIT + 1)),
+		17 => STD_LOGIC_VECTOR(to_unsigned(5 , CARD_MAX_BIT + 1)),
+		18 => STD_LOGIC_VECTOR(to_unsigned(6 , CARD_MAX_BIT + 1)),
+		19 => STD_LOGIC_VECTOR(to_unsigned(7 , CARD_MAX_BIT + 1)),
+		20 => STD_LOGIC_VECTOR(to_unsigned(8 , CARD_MAX_BIT + 1)),
+		21 => STD_LOGIC_VECTOR(to_unsigned(9 , CARD_MAX_BIT + 1)),
+		22 => STD_LOGIC_VECTOR(to_unsigned(10, CARD_MAX_BIT + 1)),
+		23 => STD_LOGIC_VECTOR(to_unsigned(11, CARD_MAX_BIT + 1)),
+		24 => STD_LOGIC_VECTOR(to_unsigned(12, CARD_MAX_BIT + 1)),
+		25 => STD_LOGIC_VECTOR(to_unsigned(13, CARD_MAX_BIT + 1)),
+		26 => STD_LOGIC_VECTOR(to_unsigned(1 , CARD_MAX_BIT + 1)),
+		27 => STD_LOGIC_VECTOR(to_unsigned(2 , CARD_MAX_BIT + 1)),
+		28 => STD_LOGIC_VECTOR(to_unsigned(3 , CARD_MAX_BIT + 1)),
+		29 => STD_LOGIC_VECTOR(to_unsigned(4 , CARD_MAX_BIT + 1)),
+		30 => STD_LOGIC_VECTOR(to_unsigned(5 , CARD_MAX_BIT + 1)),
+		31 => STD_LOGIC_VECTOR(to_unsigned(6 , CARD_MAX_BIT + 1)),
+		32 => STD_LOGIC_VECTOR(to_unsigned(7 , CARD_MAX_BIT + 1)),
+		33 => STD_LOGIC_VECTOR(to_unsigned(8 , CARD_MAX_BIT + 1)),
+		34 => STD_LOGIC_VECTOR(to_unsigned(9 , CARD_MAX_BIT + 1)),
+		35 => STD_LOGIC_VECTOR(to_unsigned(10, CARD_MAX_BIT + 1)),
+		36 => STD_LOGIC_VECTOR(to_unsigned(11, CARD_MAX_BIT + 1)),
+		37 => STD_LOGIC_VECTOR(to_unsigned(12, CARD_MAX_BIT + 1)),
+		38 => STD_LOGIC_VECTOR(to_unsigned(13, CARD_MAX_BIT + 1)),
+		39 => STD_LOGIC_VECTOR(to_unsigned(1 , CARD_MAX_BIT + 1)),
+		40 => STD_LOGIC_VECTOR(to_unsigned(2 , CARD_MAX_BIT + 1)),
+		41 => STD_LOGIC_VECTOR(to_unsigned(3 , CARD_MAX_BIT + 1)),
+		42 => STD_LOGIC_VECTOR(to_unsigned(4 , CARD_MAX_BIT + 1)),
+		43 => STD_LOGIC_VECTOR(to_unsigned(5 , CARD_MAX_BIT + 1)),
+		44 => STD_LOGIC_VECTOR(to_unsigned(6 , CARD_MAX_BIT + 1)),
+		45 => STD_LOGIC_VECTOR(to_unsigned(7 , CARD_MAX_BIT + 1)),
+		46 => STD_LOGIC_VECTOR(to_unsigned(8 , CARD_MAX_BIT + 1)),
+		47 => STD_LOGIC_VECTOR(to_unsigned(9 , CARD_MAX_BIT + 1)),
+		48 => STD_LOGIC_VECTOR(to_unsigned(10, CARD_MAX_BIT + 1)),
+		49 => STD_LOGIC_VECTOR(to_unsigned(11, CARD_MAX_BIT + 1)),
+		50 => STD_LOGIC_VECTOR(to_unsigned(12, CARD_MAX_BIT + 1)),
+		51 => STD_LOGIC_VECTOR(to_unsigned(13, CARD_MAX_BIT + 1))
 	);
 	
+	-- Position in the shuffled deck
 	SIGNAL SHUFFLED_INDEX: INTEGER := 0;
 
 
 BEGIN
 	-- lfsr and circular counter instances
-	lfsr: lfsr_circular_counter PORT MAP (CLK, LFSR_SET_START, LFSR_SET_READY, LFSR_SET_VAL, LFSR_SHIFT_START, LFSR_SHIFT_READY, LFSR_OUTPUT);
+	lfsr: lfsr_circular_counter GENERIC MAP (LFSR_MAX_BIT) PORT MAP (CLK, LFSR_SET_START, LFSR_SET_READY, LFSR_SET_VAL, LFSR_SHIFT_START, LFSR_SHIFT_READY, LFSR_OUTPUT);
 	
 	LFSR_SET_VAL <= SEED;
 
@@ -122,11 +126,12 @@ BEGIN
 				LFSR_SET_START <= '1';
 
 			ELSIF (STATE = S_SHUFFLE_START AND LFSR_SET_READY = '0') THEN -- Intermediate lfsr setting stage
-				STATE <= S_LFSR_SETTING;
+				STATE <= S_LFSR_SETTING;	
 				LFSR_SET_START <= '0';
 			
-			ELSIF (STATE = S_LFSR_SETTING AND LFSR_SET_READY = '1') THEN -- lfsr done setting
-				STATE <= S_LFSR_SET;
+			ELSIF (STATE = S_LFSR_SETTING AND LFSR_SET_READY = '1') THEN -- lfsr done setting, perform first shift to ensure starting position is within 0-51 if the seed was above 51
+				STATE <= S_LFSR_SHIFT_START;
+				LFSR_SHIFT_START <= '1';
 			
 			ELSIF (STATE = S_LFSR_SET) THEN -- Load the card into the shuffled deck, increment count of cards added
 				STATE <= S_SHUFFLED_CHECK;
@@ -134,7 +139,7 @@ BEGIN
 				SHUFFLED_INDEX <= SHUFFLED_INDEX + 1;
 			
 			ELSIF (STATE = S_SHUFFLED_CHECK) THEN -- If all cards added, shuffle complete
-				IF (SHUFFLED_INDEX <= 51) THEN -- Not all cards added, get new card
+				IF (SHUFFLED_INDEX <= MAX_CARD) THEN -- Not all cards added, get new card
 					STATE <= S_LFSR_SHIFT_START;
 					LFSR_SHIFT_START <= '1';
 
@@ -151,15 +156,20 @@ BEGIN
 			ELSIF (STATE = S_LFSR_SHIFTING AND LFSR_SHIFT_READY = '1') THEN -- lfsr done shifting, add the new one to deck
 				STATE <= S_LFSR_SET;
 
-			ELSIF (STATE = S_SHUFFLED AND CARD_START = '1') THEN -- Requested to get a new card
-				STATE <= S_CARD_GETTING;
-				CARD_READY <= '0';
-				CARD <= SHUFFLED_CARDS(SHUFFLED_INDEX);
-				SHUFFLED_INDEX <= SHUFFLED_INDEX + 1;
-				
+			ELSIF (STATE = S_SHUFFLED AND CARD_START = '1') THEN -- Requested to get a new card, unless too many cards requested
+				IF (SHUFFLED_INDEX <= MAX_CARD) THEN
+					STATE <= S_CARD_GETTING;
+					CARD_READY <= '0';
+					CARD <= SHUFFLED_CARDS(SHUFFLED_INDEX);
+					SHUFFLED_INDEX <= SHUFFLED_INDEX + 1;
+				ELSE
+					CARD_OVERFLOW <= '1'; -- Indicate overflow, deck is stuck in this state
+				END IF;
+
 			ELSIF (STATE = S_CARD_GETTING AND CARD_START = '0') THEN -- Card ready
 				STATE <= S_SHUFFLED;
 				CARD_READY <= '1';
+
 			END IF;
 		END IF;
 	END PROCESS;

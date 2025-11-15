@@ -16,13 +16,16 @@ END testbench;
 
 ARCHITECTURE Behaviour OF testbench IS
    COMPONENT deck
+	GENERIC (LFSR_MAX_BIT: INTEGER := 5;
+				CARD_MAX_BIT: INTEGER := 3);
 	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock							
 				SHUFFLE_START: IN STD_LOGIC; -- Initiate shuffling					
 				SHUFFLE_READY: OUT STD_LOGIC := '1'; -- Low until shuffling complete
-				SEED: IN STD_LOGIC_VECTOR(5 DOWNTO 0); -- Seed to initialize lfsr
+				SEED: IN STD_LOGIC_VECTOR(LFSR_MAX_BIT DOWNTO 0); -- Seed to initialize lfsr
 				CARD_START: IN STD_LOGIC; -- Initiate drawing card
 				CARD_READY: OUT STD_LOGIC := '1'; -- Low until card value ready
-				CARD: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)); -- Card value			
+				CARD: OUT STD_LOGIC_VECTOR(CARD_MAX_BIT DOWNTO 0); -- Card value
+				CARD_OVERFLOW: OUT STD_LOGIC := '0'); -- 1 if the user requests too many cards from the deck
    END COMPONENT;
 
    SIGNAL CLK: STD_LOGIC := '0';
@@ -32,18 +35,19 @@ ARCHITECTURE Behaviour OF testbench IS
    SIGNAL CARD_START: STD_LOGIC := '0';
    SIGNAL CARD_READY: STD_LOGIC;
    SIGNAL CARD: STD_LOGIC_VECTOR(3 DOWNTO 0);
+   SIGNAL CARD_OVERFLOW: STD_LOGIC;
 
    -- Testbench state
    TYPE T_STATE IS (S1, S2, S3, S4, S5);
    SIGNAL STATE: T_STATE;
 
 BEGIN
-   deck_inst: deck PORT MAP (CLK, SHUFFLE_START, SHUFFLE_READY, SEED, CARD_START, CARD_READY, CARD);
+   deck_inst: deck PORT MAP (CLK, SHUFFLE_START, SHUFFLE_READY, SEED, CARD_START, CARD_READY, CARD, CARD_OVERFLOW);
 
    -- Run clock continuously
    PROCESS
    BEGIN
-   SEED <= "101010";
+   SEED <= "111010";
    WHILE (1 = 1) LOOP
       WAIT FOR 5 ns;
       CLK <= '1';

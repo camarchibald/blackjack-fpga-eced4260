@@ -16,4 +16,4 @@ vsim work.testbench -Lf 220model -Lf altera_mf
 # show waveforms specified in wave.do
 do deck_wave.do
 # advance the simulation the desired amount of time
-run 5000 ns
+run 10000 ns
