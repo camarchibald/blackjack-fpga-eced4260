@@ -3,8 +3,8 @@
 -- Student ID: B00893056
 -- Date: 2025-11-16
 -- File Name: adder.vhd
--- Architecture: 6 bit adder, add a card value to a running sum chosen from two channels
--- Description: 
+-- Architecture: 
+-- Description: 6 bit adder, add a card value to a running sum chosen from two channels
 -- Acknowledgements: https://www.geeksforgeeks.org/digital-logic/full-adder-in-digital-logic/, full adder
 -- 	https://www.geeksforgeeks.org/digital-logic/half-adder-in-digital-logic/, half adder
 -------------------------------------------------
