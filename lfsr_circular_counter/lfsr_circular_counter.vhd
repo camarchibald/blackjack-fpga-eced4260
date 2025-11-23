@@ -14,6 +14,7 @@ USE IEEE.numeric_std.all;
 ENTITY lfsr_circular_counter IS
 	GENERIC (HIGH_BIT: INTEGER := 5); -- Highest bit in register
 	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock
+				RESET: IN STD_LOGIC; -- Asynchronous reset
 				SET_START: IN STD_LOGIC; -- Initiate setting
 				SET_READY: OUT STD_LOGIC := '1'; -- Low until setting complete
 				SET_VAL: IN STD_LOGIC_VECTOR(HIGH_BIT DOWNTO 0); -- Reset number
@@ -29,9 +30,13 @@ ARCHITECTURE Behaviour OF lfsr_circular_counter IS
 	CONSTANT MAX: UNSIGNED(HIGH_BIT DOWNTO 0) := to_unsigned(51, HIGH_BIT + 1); -- Maximum value
 
 BEGIN
-	PROCESS (CLK)
+	PROCESS (CLK, RESET)
 	BEGIN
-		IF rising_edge(CLK) THEN
+		IF (RESET = '1') THEN
+			STATE <= S_SET_START;
+			SET_READY <= '1';
+		
+		ELSIF rising_edge(CLK) THEN
 			IF ((STATE = S_SET_START OR STATE = S_SHIFT_SET_START) AND SET_START = '1') THEN	-- Load starting value in, SET_READY low
 				STATE <= S_SETTING;
 				SET_READY <= '0';

@@ -2,6 +2,7 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -label CLK /testbench/CLK
+add wave -noupdate -label RESET /testbench/RESET
 add wave -noupdate -label SET_START /testbench/SET_START
 add wave -noupdate -label SET_READY /testbench/SET_READY
 add wave -noupdate -label SET_VAL -radix unsigned /testbench/SET_VAL

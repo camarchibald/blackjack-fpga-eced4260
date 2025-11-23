@@ -14,7 +14,8 @@ USE IEEE.numeric_std.all;
 ENTITY deck IS
 	GENERIC (LFSR_MAX_BIT: INTEGER := 5;
 				CARD_MAX_BIT: INTEGER := 3);
-	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock							
+	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock
+				RESET: IN STD_LOGIC; -- Asynchronous reset						
 				SHUFFLE_START: IN STD_LOGIC; -- Initiate shuffling					
 				SHUFFLE_READY: OUT STD_LOGIC := '1'; -- Low until shuffling complete
 				SEED: IN STD_LOGIC_VECTOR(LFSR_MAX_BIT DOWNTO 0); -- Seed to initialize lfsr
@@ -29,6 +30,7 @@ ARCHITECTURE Behaviour OF deck IS
 	COMPONENT lfsr_circular_counter
 	GENERIC (HIGH_BIT: INTEGER := 5); -- Highest bit in register
 	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock
+				RESET: IN STD_LOGIC; -- Asynchronous reset
 				SET_START: IN STD_LOGIC; -- Initiate setting
 				SET_READY: OUT STD_LOGIC := '1'; -- Low until setting complete
 				SET_VAL: IN STD_LOGIC_VECTOR(HIGH_BIT DOWNTO 0); -- Reset number
@@ -113,7 +115,7 @@ ARCHITECTURE Behaviour OF deck IS
 
 BEGIN
 	-- lfsr and circular counter instances
-	lfsr: lfsr_circular_counter GENERIC MAP (LFSR_MAX_BIT) PORT MAP (CLK, LFSR_SET_START, LFSR_SET_READY, LFSR_SET_VAL, LFSR_SHIFT_START, LFSR_SHIFT_READY, LFSR_OUTPUT);
+	lfsr: lfsr_circular_counter GENERIC MAP (LFSR_MAX_BIT) PORT MAP (CLK, RESET, LFSR_SET_START, LFSR_SET_READY, LFSR_SET_VAL, LFSR_SHIFT_START, LFSR_SHIFT_READY, LFSR_OUTPUT);
 	
 	LFSR_SET_VAL <= SEED;
 

@@ -18,6 +18,7 @@ ARCHITECTURE Behaviour OF testbench IS
    COMPONENT lfsr_circular_counter
    GENERIC (HIGH_BIT: INTEGER := 5); -- Highest bit in register
 	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock
+            RESET: IN STD_LOGIC; -- Asynchronous reset
 				SET_START: IN STD_LOGIC; -- Initiate setting
 				SET_READY: OUT STD_LOGIC := '1'; -- Low until setting complete
 				SET_VAL: IN STD_LOGIC_VECTOR(5 DOWNTO 0); -- Reset number
@@ -27,6 +28,7 @@ ARCHITECTURE Behaviour OF testbench IS
    END COMPONENT;
 
    SIGNAL CLK: STD_LOGIC := '0';
+   SIGNAL RESET: STD_LOGIC := '0';
    SIGNAL SET_START: STD_LOGIC := '0';
    SIGNAL SET_READY: STD_LOGIC;
    SIGNAL SET_VAL: STD_LOGIC_VECTOR(5 DOWNTO 0);
@@ -38,8 +40,10 @@ ARCHITECTURE Behaviour OF testbench IS
    TYPE T_STATE IS (S1, S2, S3, S4);
    SIGNAL STATE: T_STATE;
 
+   SIGNAL COUNT: INTEGER:= 0;
+
 BEGIN
-   inst: lfsr_circular_counter PORT MAP (CLK, SET_START, SET_READY, SET_VAL, SHIFT_START, SHIFT_READY, OUTPUT);
+   inst: lfsr_circular_counter PORT MAP (CLK, RESET, SET_START, SET_READY, SET_VAL, SHIFT_START, SHIFT_READY, OUTPUT);
 
    -- Run clock continuously
    PROCESS
@@ -59,6 +63,7 @@ BEGIN
       IF rising_edge(CLK) THEN
          IF (STATE = S1 AND SET_READY = '1') THEN
             SET_START <= '1';
+            RESET <= '0';
          ELSIF (STATE = S1 AND SET_READY = '0') THEN
             STATE <= S2;
             SET_START <= '0';
@@ -70,7 +75,14 @@ BEGIN
             STATE <= S4;
             SHIFT_START <= '0';
          ELSIF (STATE = S4 AND SHIFT_READY = '1') THEN
-            STATE <= S3;
+            IF (COUNT > 10) THEN
+               COUNT <= 0;
+               RESET <= '1';
+               STATE <= S1;
+            ELSE 
+               COUNT <= COUNT + 1;
+               STATE <= S3;
+            END IF;
          END IF;
       END IF;
    END PROCESS;

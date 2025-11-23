@@ -19,6 +19,7 @@ ARCHITECTURE Behaviour OF testbench IS
 	GENERIC (LFSR_MAX_BIT: INTEGER := 5;
 				CARD_MAX_BIT: INTEGER := 3);
 	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock							
+            RESET: IN STD_LOGIC; -- Asynchronous reset						
 				SHUFFLE_START: IN STD_LOGIC; -- Initiate shuffling					
 				SHUFFLE_READY: OUT STD_LOGIC := '1'; -- Low until shuffling complete
 				SEED: IN STD_LOGIC_VECTOR(LFSR_MAX_BIT DOWNTO 0); -- Seed to initialize lfsr
@@ -29,6 +30,7 @@ ARCHITECTURE Behaviour OF testbench IS
    END COMPONENT;
 
    SIGNAL CLK: STD_LOGIC := '0';
+   SIGNAL RESET: STD_LOGIC := '0';
    SIGNAL SHUFFLE_START: STD_LOGIC := '0';
    SIGNAL SHUFFLE_READY: STD_LOGIC;
    SIGNAL SEED: STD_LOGIC_VECTOR(5 DOWNTO 0);
@@ -42,7 +44,7 @@ ARCHITECTURE Behaviour OF testbench IS
    SIGNAL STATE: T_STATE;
 
 BEGIN
-   deck_inst: deck PORT MAP (CLK, SHUFFLE_START, SHUFFLE_READY, SEED, CARD_START, CARD_READY, CARD, CARD_OVERFLOW);
+   deck_inst: deck PORT MAP (CLK, RESET, SHUFFLE_START, SHUFFLE_READY, SEED, CARD_START, CARD_READY, CARD, CARD_OVERFLOW);
 
    -- Run clock continuously
    PROCESS
