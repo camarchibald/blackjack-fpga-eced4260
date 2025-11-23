@@ -9,16 +9,17 @@ Acknowledgements:
 
 module controller (
     input clk,
-    input rst
+    input rst,
+    input user_ready_to_begin
 );
 
     // State parameters
-    parameter S0	= 4'b0000; // Reset state
-	parameter S1	= 4'b0001; // Shuffle start send
-	parameter S2	= 4'b0010; // Shuffle done
-	parameter S3 	= 4'b0011; // Game start
-	parameter S4 	= 4'b0100;
-	parameter S5 	= 4'b0101;
+    parameter S_RESET	            = 4'b0000; // Reset state
+	parameter S_SHUFFLE_START	    = 4'b0001; // Shuffle start send
+	parameter S_SHUFFLE_DONE	    = 4'b0010; // Shuffle done
+	parameter S_GAME_START 	        = 4'b0011; // Game start
+	parameter S_CARD_START_HOUSE 	= 4'b0100;
+	parameter S_GETTING_CARD_HOUSE 	= 4'b0101;
     parameter S6 	= 4'b0110;
     parameter S7 	= 4'b0111;
     parameter S8 	= 4'b1000;
@@ -30,8 +31,11 @@ module controller (
     parameter S14 	= 4'b1110;
     parameter S15 	= 4'b1111;
 
+    // User inputs
+    reg user_ready_to_begin_r;
+
     // 4 bit FSM state register
-    reg [3:0] state = S0;
+    reg [3:0] state = S_RESET;
 
     // Deck module control signals
     reg shuffle_start = 0, card_start = 0;
@@ -42,7 +46,7 @@ module controller (
     reg [5:0] seed = 5'b01010;
 
     // Sum registers
-    reg [5:0] player_sum_r, house_sum_r;
+    reg [5:0] player_sum_r = 6'b000000, house_sum_r = 6'b000000;
 
     // Sum output
     wire [5:0] player_sum_w, house_sum_w;
@@ -96,13 +100,18 @@ module controller (
         .lt(cp_lt)
     );
 
+    // Assign I/O
+    assign user_ready_to_begin_r = user_ready_to_begin;
+
     // Main FSM
     always @ (posedge clk or posedge rst) begin
         
-        /// If reset pin is high, go to S0
+        // If reset pin is high, go to S0
         if (rst) 
         begin
-            state <= S0;
+            state <= S_RESET;
+            house_sum_r = 6'b000000;
+            player_sum_r = 6'b000000;
         end
 
         else 
@@ -111,28 +120,38 @@ module controller (
             // Logic for remaining cases
             case(state)
 
-                S0: // Reset state
+                S_RESET: // Reset state
                     if(!rst) begin
-                        state <= S1;
+                        state <= S_SHUFFLE_START;
                     end
 
-                S1: // Shuffle start send
+                S_SHUFFLE_START: // Shuffle start send
                     if(shuffle_ready) begin
                         shuffle_start <= 1;
                     end
                     else if (!shuffle_ready) begin
                         shuffle_start <= 0;
-                        state <= S2;
+                        state <= S_SHUFFLE_DONE;
                     end 
 
-                S2: // Shuffle done
-                    if(shuffle_ready) begin // TODO: Implement user start game signal
-                        state <= S3;
+                S_SHUFFLE_DONE: // Shuffle done
+                    if(shuffle_ready & user_ready_to_begin_r) begin
+                        state <= S_GAME_START;
                     end
                 
-                S3: // Game start
-                    state <= S3;
-
+                S_GAME_START: // Game start
+                    if(!user_ready_to_begin_r) begin
+                        card_start <= 1;
+                        state <= S_CARD_START_HOUSE;
+                    end
+                
+                S_CARD_START_HOUSE:
+                    if(card_ready) begin
+                       card_start <= 0;
+                       state <= S_GETTING_CARD_HOUSE; 
+                    end
+                S_GETTING_CARD_HOUSE:
+                    state <= S_GETTING_CARD_HOUSE;
 
             endcase
         end

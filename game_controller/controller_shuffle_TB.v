@@ -12,11 +12,13 @@ module controller_shuffle_TB ();
 
     reg clk = 0;
     reg rst;
+    reg user_ready_to_begin = 0;
 
     // Instantiate controller
     controller U1 (
         .clk(clk),
-        .rst(rst)
+        .rst(rst),
+        .user_ready_to_begin(user_ready_to_begin)
     );
 
     // Main clock
@@ -31,7 +33,8 @@ module controller_shuffle_TB ();
         // Reset released after 3 clock cycles
         #3 rst <= 0;
 
-        
+        #700 user_ready_to_begin <= 1;
+        #20 user_ready_to_begin <= 0;
 
 
     end
