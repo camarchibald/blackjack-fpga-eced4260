@@ -34,27 +34,33 @@ module controller (
     reg [3:0] state = S0;
 
     // Deck module control signals
-    reg card_overflow, shuffling, card_ready, shuffle_ready, shuffle_start, card_start;
+    reg shuffle_start, card_start;
+    wire shuffle_ready, card_ready, card_overflow, shuffling;
 
     // Deck module data registers
-    reg [3:0] card;
+    wire [3:0] card;
     reg [5:0] seed;
 
     // Sum registers
-    reg [5:0] player_sum, house_sum;
+    reg [5:0] player_sum_r, house_sum_r;
+
+    // Sum output
+    wire [5:0] player_sum_w, house_sum_w;
 
     // Adder module control signals
     reg player_select, house_select;
 
     // Comparator module control signals
-    reg val1_player, val1_house, val2_player, val2_house, val2_21, val2_17, cp_eq, cp_gt, cp_let;
+    reg val1_player, val1_house, val2_player, val2_house, val2_21, val2_17;
+    wire cp_eq, cp_gt, cp_lt;
 
     // Display module control signals
     wire display_ready;
-    register [2:0] game_state;
+    reg [2:0] game_state;
 
     // Deck instantiation
     deck deck_instance(
+        .clk(clk),
         .shuffle_start(shuffle_start),
         .shuffle_ready(shuffle_ready),
         .seed(seed),
@@ -67,18 +73,18 @@ module controller (
     // Adder instantiation
     adder adder_instance(
         .card(card),
-        .player_input(player_sum),
-        .house_input(house_sum),
-        .player_output(player_sum),
-        .house_output(house_sum),
+        .player_input(player_sum_r),
+        .house_input(house_sum_r),
+        .player_output(player_sum_w),
+        .house_output(house_sum_w),
         .player_select(player_select),
         .house_select(house_select)
     );
 
     // Comparator instantiation
     comparator comparator_instance(
-        .player_input(player_sum),
-        .house_input(house_sum),
+        .player_input(player_sum_r),
+        .house_input(house_sum_r),
         .val1_player(val1_player),
         .val1_house(val2_player),
         .val2_player(val2_player),
@@ -105,37 +111,26 @@ module controller (
             // Logic for remaining cases
             case(state)
 
-                S_SHUFFLE_START:
-                    // assert shuffle deck control signal
-                    // read deck shuffling control signal
-                        // if deck shuffling control signal is high, go to SHUFFLING state
-                S_SHUFFLING:
-                    // read deck_shuffling control signal
-                        // if deck shuffling control signal is low, set shuffle ready register and light shuffle LED
-                        // if user pressed start after LED, go to DEAL_START state
-                S_DEAL_START:
-                    // read start button
-                        // if start button is still asserted by used remain here
-                        // else set card_start control signal
-                S_CARD_START_HOUSE_PREGAME:
-                S_GETTING_CARD_HOUSE:
-                S_ADD_HOUSE_PREGAME:
-                S_CARD_START_PLAYER_PREGAME:
-                S_GETTING_CARD_PLAYER:
-                S_ADD_PLAYER_PREGAME:
-                S_DEAL_DONE_CHECK:
-                S_PLAY_START:
-                S_PLAYER_HIT:
-                S_PLAYER_STAND:
-                S_CARD_START_PLAYER_INGAME:
-                S_GETTING_CARD_PLAYER_INGAME:
-                S_ADD_PLAYER_INGAME:
-                S_CHECK_PLAYER_BUST:
-                S_CHECK_HOUSE_HIT:
-                S_CARD_START_HOUSE_INGAME:
-                S_GETTING_CARD_HOUSE_INGAME:
-                S_CHECK_BUST_HOUSE:
-                S_DETERMINE_WINNER:
+                S0:
+                    if(!rst) begin
+                        shuffle_start <= 1;
+                        state <= S1;
+                    end
+
+                S1:
+                    if(!shuffle_ready) begin
+                        shuffle_start <= 0;
+                        state <= S2;
+                    end
+
+                S2:
+                    if(shuffle_ready /*& user_start_game*/) begin // TODO: Implement user start game signal
+                        state <= S3;
+                    end
+                
+                S3:
+                    state <= S3;
+
 
             endcase
         end
