@@ -3,9 +3,9 @@ quietly WaveActivateNextPane {} 0
 
 add wave -noupdate -divider MAIN_CONTROLLER
 
-add wave -noupdate -label CLOCK    /controller_shuffle_TB/clk
-add wave -noupdate -label RESET    /controller_shuffle_TB/rst
-add wave -noupdate -label RESET    /controller_shuffle_TB/rst
+add wave -noupdate -label CLOCK                     /controller_shuffle_TB/clk
+add wave -noupdate -label RESET                     /controller_shuffle_TB/rst
+add wave -noupdate -label STATE -radix unsigned     /controller_shuffle_TB/U1/state
 
 add wave -noupdate -divider DECK_MODULE
 
@@ -17,10 +17,20 @@ add wave -noupdate -label CARD_READY        /controller_shuffle_TB/U1/deck_insta
 add wave -noupdate -label CARD              /controller_shuffle_TB/U1/deck_instance/card
 add wave -noupdate -label CARD_OVERFLOW     /controller_shuffle_TB/U1/deck_instance/card_overflow
 
+add wave -noupdate -divider LFSR_DECK_HANDSHAKES
+add wave -noupdate -label LFSR_SET_START    /controller_shuffle_TB/U1/deck_instance/LFSR_SET_START
+add wave -noupdate -label LFSR_SET_READY    /controller_shuffle_TB/U1/deck_instance/LFSR_SET_READY
+add wave -noupdate -label LFSR_SHIFT_START  /controller_shuffle_TB/U1/deck_instance/LFSR_SHIFT_START
+add wave -noupdate -label LFSR_SHIFT_READY  /controller_shuffle_TB/U1/deck_instance/LFSR_SHIFT_READY
+
+add wave -noupdate -divider INTERNAL_STATES
+add wave -noupdate -label DECK -radix unsigned /controller_shuffle_TB/U1/deck_instance/SHUFFLED_CARDS
+add wave -noupdate -label LFSR -radix unsigned /controller_shuffle_TB/U1/deck_instance/lfsr/OUTPUT
+
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {2000000 ps} 0}
+WaveRestoreCursors {{Cursor 1} {50000000 ps} 0}
 quietly wave cursor active 1
-configure wave -namecolwidth 73
+configure wave -namecolwidth 240
 configure wave -valuecolwidth 64
 configure wave -justifyvalue left
 configure wave -signalnamewidth 0

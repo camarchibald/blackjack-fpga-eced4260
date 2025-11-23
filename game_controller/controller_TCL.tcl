@@ -12,15 +12,16 @@ vlib deck
 vcom ../deck/*.vhd
 vcom ../comparator/*.vhd
 vcom ../adder/*.vhd
+vcom ../lfsr_circular_counter/*.vhd
 
 # Compile all your Verilog design and testbench files
 vlog *.v
 
 # Launch simulation with proper library references
-vsim -L adder -L comparator -L deck -L work work.controller_shuffle_TB
+vsim work.controller_shuffle_TB
 
 # Load waveform setup if needed
 do wave.do
 
 # Run the simulation
-run 650 ns
+run 5000 ns

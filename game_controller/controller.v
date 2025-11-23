@@ -13,10 +13,10 @@ module controller (
 );
 
     // State parameters
-    parameter S0	= 4'b0000;
-	parameter S1	= 4'b0001;
-	parameter S2	= 4'b0010;
-	parameter S3 	= 4'b0011;
+    parameter S0	= 4'b0000; // Reset state
+	parameter S1	= 4'b0001; // Shuffle start send
+	parameter S2	= 4'b0010; // Shuffle done
+	parameter S3 	= 4'b0011; // Game start
 	parameter S4 	= 4'b0100;
 	parameter S5 	= 4'b0101;
     parameter S6 	= 4'b0110;
@@ -34,12 +34,12 @@ module controller (
     reg [3:0] state = S0;
 
     // Deck module control signals
-    reg shuffle_start, card_start;
+    reg shuffle_start = 0, card_start = 0;
     wire shuffle_ready, card_ready, card_overflow, shuffling;
 
     // Deck module data registers
     wire [3:0] card;
-    reg [5:0] seed;
+    reg [5:0] seed = 5'b01010;
 
     // Sum registers
     reg [5:0] player_sum_r, house_sum_r;
@@ -111,24 +111,26 @@ module controller (
             // Logic for remaining cases
             case(state)
 
-                S0:
+                S0: // Reset state
                     if(!rst) begin
-                        shuffle_start <= 1;
                         state <= S1;
                     end
 
-                S1:
-                    if(!shuffle_ready) begin
+                S1: // Shuffle start send
+                    if(shuffle_ready) begin
+                        shuffle_start <= 1;
+                    end
+                    else if (!shuffle_ready) begin
                         shuffle_start <= 0;
                         state <= S2;
-                    end
+                    end 
 
-                S2:
-                    if(shuffle_ready /*& user_start_game*/) begin // TODO: Implement user start game signal
+                S2: // Shuffle done
+                    if(shuffle_ready) begin // TODO: Implement user start game signal
                         state <= S3;
                     end
                 
-                S3:
+                S3: // Game start
                     state <= S3;
 
 
