@@ -15,7 +15,7 @@ Z1 w1763683208
 Z2 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
 Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z4 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
-!i122 78
+!i122 98
 R0
 Z5 8../adder/adder.vhd
 Z6 F../adder/adder.vhd
@@ -25,9 +25,9 @@ ViglCmV70T>M;gMlf]PmfX0
 !s100 B2H>^GW0meEZlJ`ZHC7nC3
 Z8 OV;C;2020.1;71
 32
-Z9 !s110 1763926689
+Z9 !s110 1763927062
 !i10b 1
-Z10 !s108 1763926689.000000
+Z10 !s108 1763927062.000000
 Z11 !s90 -reportprogress|300|../adder/adder.vhd|
 Z12 !s107 ../adder/adder.vhd|
 !i113 1
@@ -37,7 +37,7 @@ R2
 R3
 R4
 DEx4 work 5 adder 0 22 iglCmV70T>M;gMlf]PmfX0
-!i122 78
+!i122 98
 l34
 L25 42
 VD<T3Q;dSKz;0Vh^]ZOB;o3
@@ -101,7 +101,7 @@ R1
 R2
 R3
 R4
-!i122 77
+!i122 97
 R0
 Z23 8../comparator/comparator.vhd
 Z24 F../comparator/comparator.vhd
@@ -123,7 +123,7 @@ R2
 R3
 R4
 DEx4 work 10 comparator 0 22 N8WS4JE?2f[T9Nm?7^;EF1
-!i122 77
+!i122 97
 l32
 L23 44
 VciDn9^=iBI:TWc8A=QZbz3
@@ -138,7 +138,7 @@ R26
 !i113 1
 R13
 vcontroller
-Z27 !s110 1763926690
+R9
 !i10b 1
 !s100 ikXB^a=2OePD?Aj8_n6M_3
 R14
@@ -148,7 +148,7 @@ R0
 w1763926686
 8controller.v
 Fcontroller.v
-!i122 79
+!i122 99
 L0 10 131
 R19
 r1
@@ -160,7 +160,7 @@ R21
 !i113 1
 R22
 vcontroller_shuffle_TB
-R27
+R9
 !i10b 1
 !s100 aNjCMm^9c]jBjjg=AI3MP1
 R14
@@ -170,7 +170,7 @@ R0
 w1763925546
 R16
 R17
-!i122 79
+!i122 99
 R18
 R19
 r1
@@ -183,14 +183,14 @@ R21
 R22
 ncontroller_shuffle_@t@b
 Edeck
-Z28 w1763323254
+Z27 w1763323254
 R2
 R3
 R4
-!i122 76
+!i122 96
 R0
-Z29 8../deck/deck.vhd
-Z30 F../deck/deck.vhd
+Z28 8../deck/deck.vhd
+Z29 F../deck/deck.vhd
 l0
 L14 1
 V7HW]EgD4H1B2MNZdf]4YS0
@@ -200,8 +200,8 @@ R8
 R9
 !i10b 1
 R10
-Z31 !s90 -reportprogress|300|../deck/deck.vhd|
-Z32 !s107 ../deck/deck.vhd|
+Z30 !s90 -reportprogress|300|../deck/deck.vhd|
+Z31 !s107 ../deck/deck.vhd|
 !i113 1
 R13
 Abehaviour
@@ -209,7 +209,7 @@ R2
 R3
 R4
 DEx4 work 4 deck 0 22 7HW]EgD4H1B2MNZdf]4YS0
-!i122 76
+!i122 96
 l114
 L28 150
 VIh=1A:<@KHmbiSlJ7G>iC2
@@ -219,8 +219,8 @@ R8
 R9
 !i10b 1
 R10
+R30
 R31
-R32
 !i113 1
 R13
 Efull_adder
@@ -228,12 +228,12 @@ R1
 R2
 R3
 R4
-!i122 78
+!i122 98
 R0
 R5
 R6
 l0
-Z33 L74 1
+Z32 L74 1
 V;c5bGiKE7o2Da=Rg_`[O=3
 !s100 P4zDXJh6bIM;[E3anCiY^2
 R8
@@ -250,7 +250,7 @@ R2
 R3
 R4
 DEx4 work 10 full_adder 0 22 ;c5bGiKE7o2Da=Rg_`[O=3
-!i122 78
+!i122 98
 l87
 L79 14
 VU?mNe=UaJhn@1l_7PN8P01
@@ -269,7 +269,7 @@ R1
 R2
 R3
 R4
-!i122 78
+!i122 98
 R0
 R5
 R6
@@ -291,7 +291,7 @@ R2
 R3
 R4
 DEx4 work 10 half_adder 0 22 UJ6HB3iF?IcUZ?JAT@R5f1
-!i122 78
+!i122 98
 l106
 L105 6
 Vb8O]4B4KOVVP;RGk;Yn]J0
@@ -310,12 +310,12 @@ R1
 R2
 R3
 R4
-!i122 77
+!i122 97
 R0
 R23
 R24
 l0
-R33
+R32
 ViGoK?_1j=Q5SR:6ELf=U13
 !s100 8lBNmND0S;gPe3VA7N<Ii2
 R8
@@ -332,7 +332,7 @@ R2
 R3
 R4
 DEx4 work 17 single_comparator 0 22 iGoK?_1j=Q5SR:6ELf=U13
-!i122 77
+!i122 97
 l81
 L79 8
 VUJmnhAKfPfPN8RV`RUb9j3

@@ -1,8 +1,21 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 
+add wave -noupdate -divider MAIN_CONTROLLER
+
 add wave -noupdate -label CLOCK    /controller_shuffle_TB/clk
 add wave -noupdate -label RESET    /controller_shuffle_TB/rst
+add wave -noupdate -label RESET    /controller_shuffle_TB/rst
+
+add wave -noupdate -divider DECK_MODULE
+
+add wave -noupdate -label SHUFFLE_START     /controller_shuffle_TB/U1/deck_instance/shuffle_start
+add wave -noupdate -label SHUFFLE_READY     /controller_shuffle_TB/U1/deck_instance/shuffle_ready
+add wave -noupdate -label SEED              /controller_shuffle_TB/U1/deck_instance/seed
+add wave -noupdate -label CARD_START        /controller_shuffle_TB/U1/deck_instance/card_start
+add wave -noupdate -label CARD_READY        /controller_shuffle_TB/U1/deck_instance/card_ready
+add wave -noupdate -label CARD              /controller_shuffle_TB/U1/deck_instance/card
+add wave -noupdate -label CARD_OVERFLOW     /controller_shuffle_TB/U1/deck_instance/card_overflow
 
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {2000000 ps} 0}
