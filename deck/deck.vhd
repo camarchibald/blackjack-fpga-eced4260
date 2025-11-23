@@ -120,7 +120,7 @@ BEGIN
 	PROCESS (CLK)
 	BEGIN
 		IF rising_edge(CLK) THEN
-			IF (STATE = S_RESET AND SHUFFLE_START <= '1') THEN -- On shuffle start signal, shuffle ready goes low, initiate setting of lfsr with seed
+			IF (STATE = S_RESET AND SHUFFLE_START = '1') THEN -- On shuffle start signal, shuffle ready goes low, initiate setting of lfsr with seed
 				STATE <= S_SHUFFLE_START;
 				SHUFFLE_READY <= '0';
 				LFSR_SET_START <= '1';
