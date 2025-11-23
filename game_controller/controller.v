@@ -8,36 +8,93 @@ Acknowledgements:
 */
 
 module controller (
-    // Deck module control signals
-    input shuffle_ready,
-    input shuffling,
-    input card_ready,
-    output start_shuffle,
-    output start_card,
-
-    // Adder module control signals
-    input adder_ready,
-    output clear_sums,
-    output sum_select,
-
-    // Comparator module control signals
-    input [1:0] compare_result,
-    output [2:0] compare_command
-
-    // Display module control signals
-    input display_ready,
-    output [2:0] game_state
-
+    input clk,
+    input rst
 );
 
-    // 4 bit state register
-    reg [3:0] state;
+    // State parameters
+    parameter S0	= 4'b0000;
+	parameter S1	= 4'b0001;
+	parameter S2	= 4'b0010;
+	parameter S3 	= 4'b0011;
+	parameter S4 	= 4'b0100;
+	parameter S5 	= 4'b0101;
+    parameter S6 	= 4'b0110;
+    parameter S7 	= 4'b0111;
+    parameter S8 	= 4'b1000;
+    parameter S9 	= 4'b1001;
+    parameter S10 	= 4'b1010;
+    parameter S11 	= 4'b1011;
+    parameter S12 	= 4'b1100;
+    parameter S13 	= 4'b1101;
+    parameter S14 	= 4'b1110;
+    parameter S15 	= 4'b1111;
+
+    // 4 bit FSM state register
+    reg [3:0] state = S0;
+
+    // Deck module control signals
+    reg card_overflow, shuffling, card_ready, shuffle_ready, shuffle_start, card_start;
+
+    // Deck module data registers
+    reg [3:0] card;
+    reg [5:0] seed;
+
+    // Sum registers
+    reg [5:0] player_sum, house_sum;
+
+    // Adder module control signals
+    reg player_select, house_select;
+
+    // Comparator module control signals
+    reg val1_player, val1_house, val2_player, val2_house, val2_21, val2_17, cp_eq, cp_gt, cp_let;
+
+    // Display module control signals
+    wire display_ready;
+    register [2:0] game_state;
+
+    // Deck instantiation
+    deck deck_instance(
+        .shuffle_start(shuffle_start),
+        .shuffle_ready(shuffle_ready),
+        .seed(seed),
+        .card_start(card_start),
+        .card_ready(card_ready),
+        .card(card),
+        .card_overflow(card_overflow)
+    );
+
+    // Adder instantiation
+    adder adder_instance(
+        .card(card),
+        .player_input(player_sum),
+        .house_input(house_sum),
+        .player_output(player_sum),
+        .house_output(house_sum),
+        .player_select(player_select),
+        .house_select(house_select)
+    );
+
+    // Comparator instantiation
+    comparator comparator_instance(
+        .player_input(player_sum),
+        .house_input(house_sum),
+        .val1_player(val1_player),
+        .val1_house(val2_player),
+        .val2_player(val2_player),
+        .val2_house(val2_house),
+        .val2_21(val2_21),
+        .val2_17(val2_17),
+        .eq(cp_eq),
+        .gt(cp_gt),
+        .lt(cp_lt)
+    );
 
     // Main FSM
-    always @ (posedge clock or posedge reset) begin
+    always @ (posedge clk or posedge rst) begin
         
         /// If reset pin is high, go to S0
-        if (reset) 
+        if (rst) 
         begin
             state <= S0;
         end
