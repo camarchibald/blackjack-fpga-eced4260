@@ -14,7 +14,6 @@ module controller (
     input hit,
     input stand
 );
-
     // State parameters
     parameter S_RESET	            = 5'b00000; // 0
 	parameter S_SHUFFLE_START	    = 5'b00001; // 1
@@ -71,8 +70,6 @@ module controller (
     reg [3:0] house_hand [4:0];     // Array of 5 4-bit cards
 
     reg [2:0] player_hand_index = 3'b000, house_hand_index = 3'b000;
-
-    // TODO: check house and player hand index SOMEHWERE
 
     // Sum output
     wire [5:0] player_sum_w, house_sum_w;
@@ -242,18 +239,10 @@ module controller (
                 S_GETTING_CARD_HOUSE:
                     // Card ready signal is high again (deck has dispensed card)
                     if(card_ready) begin
-                        // If game is in dealing phase, add to sum
-                        if(game_state == DEALING_ROUND_1 || game_state == DEALING_ROUND_2) begin
-                            // Select house register as adder input
-                            house_select <= 1;
-                            // Next state is adding to house register
-                            state <= S_ADD_HOUSE;
-                        end
-                        // If game is in playing phase, house has decided to hit already
-                        else if (game_state == PLAYING) begin
-                            // Next state is checking if house busted
-                            state <= S_CP_HOUSE_BUST;
-                        end
+                        // Select house register as adder input
+                        house_select <= 1;
+                        // Next state is adding to house register
+                        state <= S_ADD_HOUSE;
                     end
                 
                 S_ADD_HOUSE:
@@ -277,13 +266,20 @@ module controller (
                         end
                         // If second round of dealing, next state is game start
                         else if(game_state == DEALING_ROUND_2) begin
+                            // Next game state is the player's first turn
                             game_state <= PLAYING;
+                            // Next state is the first state in the play phase
                             state <= S_PLAY_START;
                         end
                         // If in the playing stage of the game
                         else if (game_state == PLAYING) begin
                             // Next state is house compare bust
                             state <= S_CP_HOUSE_BUST;
+                        end
+                        // If in the done stage of the game (player has stood)
+                        else if (game_state == PLAY_DONE) begin
+                            // Next state is winner comparison
+                            state <= S_CP_WINNER;
                         end
                     end
                 
