@@ -14,17 +14,17 @@ module controller (
 );
 
     // State parameters
-    parameter S_RESET	            = 4'b0000; // Reset state
-	parameter S_SHUFFLE_START	    = 4'b0001; // Shuffle start send
-	parameter S_SHUFFLE_DONE	    = 4'b0010; // Shuffle done
-	parameter S_GAME_START 	        = 4'b0011; // Game start
+    parameter S_RESET	            = 4'b0000;
+	parameter S_SHUFFLE_START	    = 4'b0001;
+	parameter S_SHUFFLE_DONE	    = 4'b0010;
+	parameter S_DEAL_START 	        = 4'b0011;
 	parameter S_CARD_START_HOUSE 	= 4'b0100;
 	parameter S_GETTING_CARD_HOUSE 	= 4'b0101;
-    parameter S6 	= 4'b0110;
-    parameter S7 	= 4'b0111;
-    parameter S8 	= 4'b1000;
-    parameter S9 	= 4'b1001;
-    parameter S10 	= 4'b1010;
+    parameter S_ADD_HOUSE 	        = 4'b0110;
+    parameter S_CARD_START_PLAYER 	= 4'b0111;
+    parameter S_GETTING_CARD_PLAYER = 4'b1000;
+    parameter S_ADD_PLAYER 	        = 4'b1001;
+    parameter S_PLAY_START 	        = 4'b1010;
     parameter S11 	= 4'b1011;
     parameter S12 	= 4'b1100;
     parameter S13 	= 4'b1101;
@@ -36,6 +36,7 @@ module controller (
 
     // 4 bit FSM state register
     reg [3:0] state = S_RESET;
+    reg starting_deal_counter = 0;
 
     // Deck module control signals
     reg shuffle_start = 0, card_start = 0;
@@ -101,7 +102,7 @@ module controller (
     );
 
     // Assign I/O
-    assign user_ready_to_begin_r = user_ready_to_begin;
+    assign user_ready_to_begin_r = user_ready_to_begin;    
 
     // Main FSM
     always @ (posedge clk or posedge rst) begin
@@ -120,12 +121,12 @@ module controller (
             // Logic for remaining cases
             case(state)
 
-                S_RESET: // Reset state
+                S_RESET:
                     if(!rst) begin
                         state <= S_SHUFFLE_START;
                     end
 
-                S_SHUFFLE_START: // Shuffle start send
+                S_SHUFFLE_START:
                     if(shuffle_ready) begin
                         shuffle_start <= 1;
                     end
@@ -134,12 +135,12 @@ module controller (
                         state <= S_SHUFFLE_DONE;
                     end 
 
-                S_SHUFFLE_DONE: // Shuffle done
+                S_SHUFFLE_DONE:
                     if(shuffle_ready & user_ready_to_begin_r) begin
-                        state <= S_GAME_START;
+                        state <= S_DEAL_START;
                     end
                 
-                S_GAME_START: // Game start
+                S_DEAL_START:
                     if(!user_ready_to_begin_r) begin
                         card_start <= 1;
                         state <= S_CARD_START_HOUSE;
@@ -148,10 +149,51 @@ module controller (
                 S_CARD_START_HOUSE:
                     if(card_ready) begin
                        card_start <= 0;
-                       state <= S_GETTING_CARD_HOUSE; 
+                       state <= S_GETTING_CARD_HOUSE;
                     end
+
                 S_GETTING_CARD_HOUSE:
-                    state <= S_GETTING_CARD_HOUSE;
+                    if(!card_ready) begin
+                        house_select <= 1;
+                        state <= S_ADD_HOUSE;
+                    end
+                
+                S_ADD_HOUSE:
+                    begin
+                        house_sum_r <= house_sum_w;
+                        house_select <= 0;
+                        card_start <= 1;
+                        state <= S_CARD_START_PLAYER;
+                    end
+
+                S_CARD_START_PLAYER:
+                    if(card_ready) begin
+                        card_start <= 0;
+                        state <= S_GETTING_CARD_PLAYER;
+                    end
+                
+                S_GETTING_CARD_PLAYER:
+                    if(!card_ready) begin
+                        player_select <= 1;
+                        state <= S_ADD_PLAYER;
+                    end
+
+                S_ADD_PLAYER:
+                    begin
+                        player_sum_r <= player_sum_w;
+                        player_select <= 0;
+                        if(!starting_deal_counter) begin
+                            starting_deal_counter <= 1;
+                            state <= S_DEAL_START;
+                        end
+                        else begin
+                            state <= S_PLAY_START;
+                        end
+                    end
+                
+                S_PLAY_START:
+                    // TODO: implement the final loop.
+                    state <= S_PLAY_START;
 
             endcase
         end
