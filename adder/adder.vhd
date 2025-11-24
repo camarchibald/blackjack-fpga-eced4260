@@ -17,6 +17,7 @@ ENTITY adder IS
 	GENERIC (SUM_MAX_BIT: INTEGER := 5; -- Max bit of the adder and sum
 				CARD_MAX_BIT: INTEGER := 3); -- Max bit of the card
 	PORT (CARD: IN STD_LOGIC_VECTOR(CARD_MAX_BIT DOWNTO 0); -- Card input to adder
+			RESET: IN STD_LOGIC; -- Asynchronous reset
 			PLAYER_INPUT, HOUSE_INPUT: IN STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0); -- Running sum inputs to adder
 			PLAYER_OUTPUT, HOUSE_OUTPUT: OUT STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0); -- Running sum outputs from adder
 			PLAYER_SELECT, HOUSE_SELECT: IN STD_LOGIC); -- Control signals, 1 outputs the adder output, 0 outputs 0					
@@ -56,11 +57,11 @@ BEGIN
 				  (OTHERS => '0');
 
 	-- Player output choose between all zeros or adder output
-	PLAYER_OUTPUT <= SUM_ARR WHEN PLAYER_SELECT = '1' ELSE
+	PLAYER_OUTPUT <= SUM_ARR WHEN (PLAYER_SELECT = '1' AND RESET = '0') ELSE
 						  (OTHERS => '0');
 
 	-- House output choose between all zeros or adder output
-	HOUSE_OUTPUT <= SUM_ARR WHEN HOUSE_SELECT = '1' ELSE
+	HOUSE_OUTPUT <= SUM_ARR WHEN (HOUSE_SELECT = '1' AND RESET = '0') ELSE
 						  (OTHERS => '0');
 	
 END Behaviour;

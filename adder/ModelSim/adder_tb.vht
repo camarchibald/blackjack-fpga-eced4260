@@ -19,6 +19,7 @@ ARCHITECTURE Behaviour OF testbench IS
 	GENERIC (SUM_MAX_BIT: INTEGER := 5; -- Max bit of the adder and sum
 				CARD_MAX_BIT: INTEGER := 3); -- Max bit of the card
 	PORT (CARD: IN STD_LOGIC_VECTOR(CARD_MAX_BIT DOWNTO 0); -- Card input to adder
+         RESET: IN STD_LOGIC; -- Asynchronous reset
 			PLAYER_INPUT, HOUSE_INPUT: IN STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0); -- Running sum inputs to adder
 			PLAYER_OUTPUT, HOUSE_OUTPUT: OUT STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0); -- Running sum outputs from adder
 			PLAYER_SELECT, HOUSE_SELECT: IN STD_LOGIC); -- Control signals, 1 outputs the adder output, 0 outputs 0					
@@ -29,12 +30,13 @@ ARCHITECTURE Behaviour OF testbench IS
 
    -- Testbench signals
    SIGNAL CARD: STD_LOGIC_VECTOR(CARD_MAX_BIT DOWNTO 0); 
+   SIGNAL RESET: STD_LOGIC := '0';
 	SIGNAL PLAYER_INPUT, HOUSE_INPUT: STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0); 
 	SIGNAL PLAYER_OUTPUT, HOUSE_OUTPUT: STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0); 
    SIGNAL PLAYER_SELECT, HOUSE_SELECT: STD_LOGIC; 
 
 BEGIN
-   adder_inst: adder GENERIC MAP (SUM_MAX_BIT, CARD_MAX_BIT) PORT MAP (CARD, PLAYER_INPUT, HOUSE_INPUT, PLAYER_OUTPUT, HOUSE_OUTPUT, PLAYER_SELECT, HOUSE_SELECT);
+   adder_inst: adder GENERIC MAP (SUM_MAX_BIT, CARD_MAX_BIT) PORT MAP (CARD, RESET, PLAYER_INPUT, HOUSE_INPUT, PLAYER_OUTPUT, HOUSE_OUTPUT, PLAYER_SELECT, HOUSE_SELECT);
 
    PROCESS
    BEGIN 
@@ -56,6 +58,9 @@ BEGIN
       PLAYER_INPUT <= STD_LOGIC_VECTOR(to_unsigned(I, PLAYER_INPUT'length));
       FOR J IN 0 TO 11 LOOP -- Loop through all possible card values
          CARD <= STD_LOGIC_VECTOR(to_unsigned(J, CARD'length));
+         RESET <= '0';
+         WAIT FOR 5 ns;
+         RESET <= '1';
          WAIT FOR 5 ns;
       END LOOP;
    END LOOP;
@@ -66,6 +71,9 @@ BEGIN
       HOUSE_INPUT <= STD_LOGIC_VECTOR(to_unsigned(I, HOUSE_INPUT'length));
       FOR J IN 0 TO 11 LOOP -- Loop through all possible card values
          CARD <= STD_LOGIC_VECTOR(to_unsigned(J, CARD'length));
+         RESET <= '0';
+         WAIT FOR 5 ns;
+         RESET <= '1';
          WAIT FOR 5 ns;
       END LOOP;
    END LOOP;

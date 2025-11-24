@@ -4,6 +4,7 @@ quietly WaveActivateNextPane {} 0
 
 add wave -noupdate -divider ADDER_VALS
 add wave -noupdate -label CARD -radix unsigned /testbench/CARD
+add wave -noupdate -label RESET /testbench/RESET
 add wave -noupdate -label PLAYER_INPUT -radix unsigned /testbench/PLAYER_INPUT
 add wave -noupdate -label HOUSE_INPUT -radix unsigned /testbench/HOUSE_INPUT
 add wave -noupdate -label PLAYER_OUTPUT -radix unsigned /testbench/PLAYER_OUTPUT
