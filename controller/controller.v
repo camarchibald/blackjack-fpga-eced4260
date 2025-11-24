@@ -129,12 +129,15 @@ module controller (
         hit_r <= hit;
         stand_r <= stand;
 
-        // If reset pin is high, go to S0
-        if (!rst) 
+        // Reset button is pressed, reset registers and go to first state
+        if (!rst)
         begin
             state <= S_RESET;
-            house_sum_r = 6'b000000;
-            player_sum_r = 6'b000000;
+            game_state <= DEALING_ROUND_1;
+            house_sum_r <= 6'b000000;
+            player_sum_r <= 6'b000000;
+            house_hand_index <= 3'b000;
+            player_hand_index <= 3'b000;
         end
 
         else 
@@ -144,95 +147,178 @@ module controller (
             case(state)
 
                 S_RESET:
+                    // Reset button has been released
                     if(rst) begin
+                        // Next state is shuffle start state
                         state <= S_SHUFFLE_START;
                     end
 
                 S_SHUFFLE_START:
+                    // Shuffle ready is high, deck is ready to be shuffled
                     if(shuffle_ready) begin
+                        // Send shuffle start command
                         shuffle_start <= 1;
                     end
+                    // Shuffle ready is low, deck is currently shuffling cards
                     else if (!shuffle_ready) begin
+                        // Reset shuffle start command
                         shuffle_start <= 0;
-                        state <= S_SHUFFLE_WAIT;
+                        // Next state waits for shuffle to complete (shuffle_ready to go high again)
+                        state <= S_SHUFFLE_WAIT;    // Go to shuffle wait state
                     end 
 
                 S_SHUFFLE_WAIT:
+                    // If shuffle is complete and user has pressed start button
                     if(shuffle_ready & !user_ready_to_begin_r) begin
+                        // Next state is start of dealing
                         state <= S_DEAL_START;
                     end
                 
                 S_DEAL_START:
-                    if(user_ready_to_begin_r) begin
+                    // User has released start button
+                    if(user_ready_to_begin_r & card_ready) begin
+                        // Send card start command
                         card_start <= 1;
-                        state <= S_CARD_START_HOUSE;
-                    end
-                
-                S_CARD_START_HOUSE:
-                    if(!card_ready) begin
-                       card_start <= 0;
-                       state <= S_GETTING_CARD_HOUSE;
-                    end
-
-                S_GETTING_CARD_HOUSE:
-                    if(card_ready) begin
-                        house_select <= 1;
-                        state <= S_ADD_HOUSE;
-                    end
-                
-                S_ADD_HOUSE:
-                    begin
-                        house_hand[house_hand_index] <= card;
-                        house_hand_index <= house_hand_index + 3'b001;
-                        house_sum_r <= house_sum_w;
-                        house_select <= 0;
-                        card_start <= 1;
+                        // Next state is getting card for player
                         state <= S_CARD_START_PLAYER;
                     end
-
+                
                 S_CARD_START_PLAYER:
+                    // Deck module is dispensing a card
                     if(!card_ready) begin
+                        // Reset card start command
                         card_start <= 0;
+                        // Next state is getting card for player
                         state <= S_GETTING_CARD_PLAYER;
                     end
                 
                 S_GETTING_CARD_PLAYER:
+                    // Card has been dispensed
                     if(card_ready) begin
+                        // Set player select line for adder
                         player_select <= 1;
+                        // Next state is adding to player sum
                         state <= S_ADD_PLAYER;
                     end
 
                 S_ADD_PLAYER:
                     begin
+                        // Store dealt card in player hand
                         player_hand[player_hand_index] <= card;
+                        // Increment player hand index
                         player_hand_index <= player_hand_index + 3'b001;
+                        // Store player sum from adder output
                         player_sum_r <= player_sum_w;
+                        // Reset adder player select signal
                         player_select <= 0;
-                        if(game_state == DEALING_ROUND_1) begin
-                            game_state <= DEALING_ROUND_2;
-                            state <= S_DEAL_START;
+                        // If in dealing stage, no need to compare at this point
+                        if(game_state == DEALING_ROUND_1 || game_state == DEALING_ROUND_2) begin
+                            // Next state is house getting card
+                            card_start <= 1;
+                            state <= S_CARD_START_HOUSE;
                         end
-                        else begin
+                        // If in playing phase of game, compare player sum to bust
+                        else if (game_state == PLAYING) begin
+                            // Next state is comparing player sum to bust
+                            state <= S_CP_PLAYER_BUST;
+                        end
+                    end
+
+                S_CARD_START_HOUSE:
+                    // Deck module is dispensing a card
+                    if(!card_ready) begin
+                        // Reset card start command
+                        card_start <= 0;
+                        // Next state is waiting for card for house
+                        state <= S_GETTING_CARD_HOUSE;
+                    end
+
+                S_GETTING_CARD_HOUSE:
+                    // Card ready signal is high again (deck has dispensed card)
+                    if(card_ready) begin
+                        // If game is in dealing phase, add to sum
+                        if(game_state == DEALING_ROUND_1 || game_state == DEALING_ROUND_2) begin
+                            // Select house register as adder input
+                            house_select <= 1;
+                            // Next state is adding to house register
+                            state <= S_ADD_HOUSE;
+                        end
+                        // If game is in playing phase, house checks whether or not to add cards
+                        else if (game_state == PLAYING) begin
+                            // Next state is house checking whether or not to hit
+                            state <= S_CP_HOUSE_HIT;
+                        end
+                    end
+                
+                S_ADD_HOUSE:
+                    begin
+                        // Store card in house hand
+                        house_hand[house_hand_index] <= card;
+                        // Increment index for house hand
+                        house_hand_index <= house_hand_index + 3'b001;
+                        // Store house sum from adder output
+                        house_sum_r <= house_sum_w;
+                        // Reset house select signal for adder
+                        house_select <= 0;
+                        // If in the first dealing phase of the game
+                        if(game_state == DEALING_ROUND_1) begin
+                            // Set card start signal for player card deal
+                            card_start <= 1;
+                            // Next state is getting card for player hand
+                            state <= S_CARD_START_PLAYER;
+                        end
+                        // If in the second dealing phase of the game
+                        else if (game_state == DEALING_ROUND_2) begin
+                            // Set game state to playing
                             game_state <= PLAYING;
-                            state <= S_PLAY_START;
+                            // Next state is house playing
+                            state <= S_CP_HOUSE_HIT;
+                        end
+                        // If in the playing stage of the game
+                        else if (game_state == PLAYING) begin
+                            // Next state is house compare bust
+                            state <= S_CP_HOUSE_BUST;
                         end
                     end
                 
                 S_PLAY_START:
-                    if(hit_r) begin
+                    if(!hit_r) begin                // Player has chosen to hit
                         state <= S_PLAYER_HIT;
                     end
-                    else if (stand_r) begin
+                    else if (!stand_r) begin        // Player has chosen to stand
                         state <= S_PLAYER_STAND;
                     end
 
                 S_PLAYER_HIT:
-                    if(!hit_r) begin
-                        state <= S_PLAYER_HIT;
+                    // Player has released hit button
+                    if(hit_r) begin
+                        // Next state is player getting a card
+                        card_start <= 1;
+                        state <= S_CARD_START_PLAYER;
                     end
 
                 S_PLAYER_STAND:
-                    state <= S_PLAYER_STAND;
+                    // Player has released stand button
+                    if(stand_r) begin
+                        // Next state is house play
+                        state <= S_CP_HOUSE_HIT;
+                        // Set comparator controls to inform house play in next state
+                    end
+
+                S_CP_HOUSE_HIT:
+                    // If less than 17, go to S_CARD_START_HOUSE
+                    // If more than 17, go to S_CP_WINNER
+                    state <= S_CP_HOUSE_HIT;
+
+                S_CP_PLAYER_BUST:
+                    // If player sum more than 21, go to S_CP_WINNER
+                    // If player sum less than 21, go to S_CP_HOUSE_HIT
+                    state <= S_CP_PLAYER_BUST;
+
+                S_CP_HOUSE_BUST:
+                    // If house sum more than 21, go to S_CP_WINNER
+                    // If house sum less than 21, go to S_PLAY_START
+                    state <= S_CP_HOUSE_BUST;
 
             endcase
         end
