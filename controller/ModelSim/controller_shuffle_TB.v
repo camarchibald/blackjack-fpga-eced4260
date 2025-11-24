@@ -12,7 +12,7 @@ module controller_shuffle_TB ();
 
     reg clk = 0;
     reg rst = 1;
-    reg user_ready_to_begin = 0;
+    reg user_ready_to_begin = 1;
     reg hit = 0;
     reg stand = 0;
 

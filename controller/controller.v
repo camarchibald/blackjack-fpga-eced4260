@@ -16,23 +16,23 @@ module controller (
 );
 
     // State parameters
-    parameter S_RESET	            = 5'b00000;
-	parameter S_SHUFFLE_START	    = 5'b00001;
-	parameter S_SHUFFLE_WAIT	    = 5'b00010;
-	parameter S_DEAL_START 	        = 5'b00011;
-	parameter S_CARD_START_HOUSE 	= 5'b00100;
-	parameter S_GETTING_CARD_HOUSE 	= 5'b00101;
-    parameter S_ADD_HOUSE 	        = 5'b00110;
-    parameter S_CARD_START_PLAYER 	= 5'b00111;
-    parameter S_GETTING_CARD_PLAYER = 5'b01000;
-    parameter S_ADD_PLAYER 	        = 5'b01001;
-    parameter S_PLAY_START 	        = 5'b01010;
-    parameter S_PLAYER_HIT 	        = 5'b01011;
-    parameter S_PLAYER_STAND 	    = 5'b01100;
-    parameter S_CP_HOUSE_HIT 	    = 5'b01101;
-    parameter S_CP_PLAYER_BUST      = 5'b01110;
-    parameter S_CP_HOUSE_BUST 	    = 5'b01111;
-    parameter S_CP_WINNER           = 5'b10000;
+    parameter S_RESET	            = 5'b00000; // 0
+	parameter S_SHUFFLE_START	    = 5'b00001; // 1
+	parameter S_SHUFFLE_WAIT	    = 5'b00010; // 2
+	parameter S_DEAL_START 	        = 5'b00011; // 3
+	parameter S_CARD_START_PLAYER 	= 5'b00100; // 4
+	parameter S_GETTING_CARD_PLAYER = 5'b00101; // 5
+    parameter S_ADD_PLAYER 	        = 5'b00110; // 6
+    parameter S_CARD_START_HOUSE 	= 5'b00111; // 7
+    parameter S_GETTING_CARD_HOUSE 	= 5'b01000; // 8
+    parameter S_ADD_HOUSE 	        = 5'b01001; // 9
+    parameter S_PLAY_START 	        = 5'b01010; // 10
+    parameter S_PLAYER_HIT 	        = 5'b01011; // 11
+    parameter S_PLAYER_STAND 	    = 5'b01100; // 12
+    parameter S_CP_HOUSE_HIT 	    = 5'b01101; // 13
+    parameter S_CP_PLAYER_BUST      = 5'b01110; // 14
+    parameter S_CP_HOUSE_BUST 	    = 5'b01111; // 15
+    parameter S_CP_WINNER           = 5'b10000; // 16
 
     // Game parameters
     parameter DEALING_ROUND_1   = 2'b00;
@@ -213,7 +213,7 @@ module controller (
                         player_select <= 0;
                         // If in dealing stage, no need to compare at this point
                         if(game_state == DEALING_ROUND_1 || game_state == DEALING_ROUND_2) begin
-                            // Next state is house getting card
+                            // Get the next deal card for the house
                             card_start <= 1;
                             state <= S_CARD_START_HOUSE;
                         end
@@ -262,17 +262,17 @@ module controller (
                         house_select <= 0;
                         // If in the first dealing phase of the game
                         if(game_state == DEALING_ROUND_1) begin
+                            // Set game state to round 2 of dealing
+                            game_state <= DEALING_ROUND_2;
                             // Set card start signal for player card deal
                             card_start <= 1;
                             // Next state is getting card for player hand
                             state <= S_CARD_START_PLAYER;
                         end
-                        // If in the second dealing phase of the game
-                        else if (game_state == DEALING_ROUND_2) begin
-                            // Set game state to playing
+                        // If second round of dealing, next state is game start
+                        else if(game_state == DEALING_ROUND_2) begin
                             game_state <= PLAYING;
-                            // Next state is house playing
-                            state <= S_CP_HOUSE_HIT;
+                            state <= S_PLAY_START;
                         end
                         // If in the playing stage of the game
                         else if (game_state == PLAYING) begin
