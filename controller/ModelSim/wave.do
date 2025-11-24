@@ -2,10 +2,11 @@ onerror {resume}
 quietly WaveActivateNextPane {} 0
 
 add wave -noupdate -divider MAIN_CONTROLLER
-add wave -noupdate -label CLOCK                     /controller_shuffle_TB/clk
-add wave -noupdate -label RESET                     /controller_shuffle_TB/rst
-add wave -noupdate -label STATE -radix unsigned     /controller_shuffle_TB/U1/state
-add wave -noupdate -label USER_BUTTON               /controller_shuffle_TB/user_ready_to_begin
+add wave -noupdate -label CLOCK                         /controller_shuffle_TB/clk
+add wave -noupdate -label RESET                         /controller_shuffle_TB/rst
+add wave -noupdate -label STATE -radix unsigned         /controller_shuffle_TB/U1/state
+add wave -noupdate -label GAME_STATE -radix unsigned    /controller_shuffle_TB/U1/game_state
+add wave -noupdate -label USER_BUTTON                   /controller_shuffle_TB/user_ready_to_begin
 
 add wave -noupdate -divider SUM_REGISTERS
 add wave -noupdate -label PLAYER_SUM -radix unsigned /controller_shuffle_TB/U1/player_sum_r

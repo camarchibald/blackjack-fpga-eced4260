@@ -35,10 +35,10 @@ module controller (
     parameter S_CP_WINNER           = 5'b10000; // 16
 
     // Game parameters
-    parameter DEALING_ROUND_1   = 2'b00;
-    parameter DEALING_ROUND_2   = 2'b01;
-    parameter PLAYING           = 2'b10;
-    parameter PLAY_DONE         = 2'b11;
+    parameter DEALING_ROUND_1       = 2'b00;    // 0
+    parameter DEALING_ROUND_2       = 2'b01;    // 1
+    parameter PLAYING               = 2'b10;    // 2
+    parameter PLAY_DONE             = 2'b11;    // 3
 
     // User inputs
     reg user_ready_to_begin_r, stand_r, hit_r;
