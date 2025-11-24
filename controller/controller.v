@@ -61,8 +61,8 @@ module controller (
     reg [5:0] player_sum_r = 6'b000000, house_sum_r = 6'b000000;
 
     // Player and house hands
-    reg [4:0] player_hand [3:0];
-    reg [3:0] house_hand [4:0];
+    reg [3:0] player_hand [4:0];    // Array of 5 4-bit cards 
+    reg [3:0] house_hand [4:0];     // Array of 5 4-bit cards
 
     reg [2:0] player_hand_index = 3'b000, house_hand_index = 3'b000;
 
