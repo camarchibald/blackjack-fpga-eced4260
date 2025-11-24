@@ -7,7 +7,7 @@ add wave -noupdate -label RESET                     /controller_shuffle_TB/rst
 add wave -noupdate -label STATE -radix unsigned     /controller_shuffle_TB/U1/state
 add wave -noupdate -label USER_BUTTON               /controller_shuffle_TB/user_ready_to_begin
 
-add wave -noupdate -divider SUM REGISTERS
+add wave -noupdate -divider SUM_REGISTERS
 add wave -noupdate -label PLAYER_SUM -radix unsigned /controller_shuffle_TB/U1/player_sum_r
 add wave -noupdate -label HOUSE_SUM -radix unsigned /controller_shuffle_TB/U1/house_sum_r
 

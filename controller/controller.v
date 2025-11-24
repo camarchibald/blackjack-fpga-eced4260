@@ -74,6 +74,7 @@ module controller (
 
     // Deck instantiation
     deck deck_instance(
+        .reset(rst),
         .clk(clk),
         .shuffle_start(shuffle_start),
         .shuffle_ready(shuffle_ready),
@@ -86,6 +87,7 @@ module controller (
 
     // Adder instantiation
     adder adder_instance(
+        .reset(rst),
         .card(card),
         .player_input(player_sum_r),
         .house_input(house_sum_r),
