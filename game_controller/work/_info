@@ -15,7 +15,7 @@ Z1 w1763683208
 Z2 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
 Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z4 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
-!i122 313
+!i122 323
 R0
 Z5 8../adder/adder.vhd
 Z6 F../adder/adder.vhd
@@ -25,9 +25,9 @@ ViglCmV70T>M;gMlf]PmfX0
 !s100 B2H>^GW0meEZlJ`ZHC7nC3
 Z8 OV;C;2020.1;71
 32
-Z9 !s110 1763946215
+Z9 !s110 1763948076
 !i10b 1
-Z10 !s108 1763946215.000000
+Z10 !s108 1763948076.000000
 Z11 !s90 -reportprogress|300|../adder/adder.vhd|
 Z12 !s107 ../adder/adder.vhd|
 !i113 1
@@ -37,7 +37,7 @@ R2
 R3
 R4
 DEx4 work 5 adder 0 22 iglCmV70T>M;gMlf]PmfX0
-!i122 313
+!i122 323
 l34
 L25 42
 VD<T3Q;dSKz;0Vh^]ZOB;o3
@@ -101,7 +101,7 @@ R1
 R2
 R3
 R4
-!i122 312
+!i122 322
 R0
 Z23 8../comparator/comparator.vhd
 Z24 F../comparator/comparator.vhd
@@ -123,7 +123,7 @@ R2
 R3
 R4
 DEx4 work 10 comparator 0 22 N8WS4JE?2f[T9Nm?7^;EF1
-!i122 312
+!i122 322
 l32
 L23 44
 VciDn9^=iBI:TWc8A=QZbz3
@@ -140,16 +140,16 @@ R13
 vcontroller
 R9
 !i10b 1
-!s100 8a7gRblQV^XZJGfgcK]@n0
+!s100 I>h`oZ27nI2E`cUEoDP230
 R14
-ID:Bl1bSJz]FK303nR>]zg3
+I?]1DbzNm[Ug[bWF3;@lDH3
 R15
 R0
-w1763946213
+w1763948074
 8controller.v
 Fcontroller.v
-!i122 315
-L0 10 194
+!i122 325
+L0 10 218
 R19
 r1
 !s85 0
@@ -170,7 +170,7 @@ R0
 w1763938294
 R16
 R17
-!i122 315
+!i122 325
 L0 11 33
 R19
 r1
@@ -187,7 +187,7 @@ Z27 w1763931189
 R2
 R3
 R4
-!i122 311
+!i122 321
 R0
 Z28 8../deck/deck.vhd
 Z29 F../deck/deck.vhd
@@ -209,7 +209,7 @@ R2
 R3
 R4
 DEx4 work 4 deck 0 22 7HW]EgD4H1B2MNZdf]4YS0
-!i122 311
+!i122 321
 l114
 L28 150
 V`faT1^ZUKhP<>V>]ZJn`d3
@@ -228,7 +228,7 @@ R1
 R2
 R3
 R4
-!i122 313
+!i122 323
 R0
 R5
 R6
@@ -250,7 +250,7 @@ R2
 R3
 R4
 DEx4 work 10 full_adder 0 22 ;c5bGiKE7o2Da=Rg_`[O=3
-!i122 313
+!i122 323
 l87
 L79 14
 VU?mNe=UaJhn@1l_7PN8P01
@@ -269,7 +269,7 @@ R1
 R2
 R3
 R4
-!i122 313
+!i122 323
 R0
 R5
 R6
@@ -291,7 +291,7 @@ R2
 R3
 R4
 DEx4 work 10 half_adder 0 22 UJ6HB3iF?IcUZ?JAT@R5f1
-!i122 313
+!i122 323
 l106
 L105 6
 Vb8O]4B4KOVVP;RGk;Yn]J0
@@ -310,7 +310,7 @@ Z34 w1763323254
 R2
 R3
 R4
-!i122 314
+!i122 324
 R0
 Z35 8../lfsr_circular_counter/lfsr_circular_counter.vhd
 Z36 F../lfsr_circular_counter/lfsr_circular_counter.vhd
@@ -332,7 +332,7 @@ R2
 R3
 R4
 DEx4 work 21 lfsr_circular_counter 0 22 cNVjPU<ieV_CIN9Sh8gc;2
-!i122 314
+!i122 324
 l31
 L25 47
 VG?<B<GVMmDA[eSKQ?ARAh0
@@ -351,7 +351,7 @@ R1
 R2
 R3
 R4
-!i122 312
+!i122 322
 R0
 R23
 R24
@@ -373,7 +373,7 @@ R2
 R3
 R4
 DEx4 work 17 single_comparator 0 22 iGoK?_1j=Q5SR:6ELf=U13
-!i122 312
+!i122 322
 l81
 L79 8
 VUJmnhAKfPfPN8RV`RUb9j3

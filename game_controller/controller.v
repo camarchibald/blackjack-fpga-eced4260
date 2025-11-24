@@ -10,7 +10,9 @@ Acknowledgements:
 module controller (
     input clk,
     input rst,
-    input user_ready_to_begin
+    input user_ready_to_begin,
+    input hit,
+    input stand
 );
 
     // State parameters
@@ -25,18 +27,26 @@ module controller (
     parameter S_GETTING_CARD_PLAYER = 4'b1000;
     parameter S_ADD_PLAYER 	        = 4'b1001;
     parameter S_PLAY_START 	        = 4'b1010;
-    parameter S11 	= 4'b1011;
-    parameter S12 	= 4'b1100;
+    parameter S_PLAYER_HIT 	        = 4'b1011;
+    parameter S_PLAYER_STAND 	    = 4'b1100;
     parameter S13 	= 4'b1101;
     parameter S14 	= 4'b1110;
     parameter S15 	= 4'b1111;
 
-    // User inputs
-    reg user_ready_to_begin_r;
+    // Game parameters
+    parameter DEALING_ROUND_1   = 2'b00;
+    parameter DEALING_ROUND_2   = 2'b01;
+    parameter PLAYING           = 2'b10;
+    parameter PLAY_DONE         = 2'b11;
 
-    // 4 bit FSM state register
+    // User inputs
+    reg user_ready_to_begin_r, stand_r, hit_r;
+
+    // Main FSM state register
     reg [3:0] state = S_RESET;
-    reg starting_deal_counter = 0;
+
+    // Game state register
+    reg [1:0] game_state = DEALING_ROUND_1;
 
     // Deck module control signals
     reg shuffle_start = 0, card_start = 0;
@@ -61,7 +71,6 @@ module controller (
 
     // Display module control signals
     wire display_ready;
-    reg [2:0] game_state;
 
     // Deck instantiation
     deck deck_instance(
@@ -102,7 +111,9 @@ module controller (
     );
 
     // Assign I/O
-    assign user_ready_to_begin_r = user_ready_to_begin;    
+    assign user_ready_to_begin_r = user_ready_to_begin;
+    assign hit_r = hit;
+    assign stand_r = stand;
 
     // Main FSM
     always @ (posedge clk or posedge rst) begin
@@ -182,18 +193,31 @@ module controller (
                     begin
                         player_sum_r <= player_sum_w;
                         player_select <= 0;
-                        if(!starting_deal_counter) begin
-                            starting_deal_counter <= 1;
+                        if(game_state == DEALING_ROUND_1) begin
+                            game_state <= DEALING_ROUND_2;
                             state <= S_DEAL_START;
                         end
                         else begin
+                            game_state <= PLAYING;
                             state <= S_PLAY_START;
                         end
                     end
                 
                 S_PLAY_START:
-                    // TODO: implement the final loop.
-                    state <= S_PLAY_START;
+                    if(hit_r) begin
+                        state <= S_PLAYER_HIT;
+                    end
+                    else if (stand_r) begin
+                        state <= S_PLAYER_STAND;
+                    end
+
+                S_PLAYER_HIT:
+                    if(!hit_r) begin
+                        state <= S_PLAYER_HIT;
+                    end
+
+                S_PLAYER_STAND:
+                    state <= S_PLAYER_STAND;
 
             endcase
         end
