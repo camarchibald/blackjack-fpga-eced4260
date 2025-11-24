@@ -83,7 +83,7 @@ module controller (
 
     // Deck instantiation
     deck deck_instance(
-        .reset(rst),
+        .reset(!rst),
         .clk(clk),
         .shuffle_start(shuffle_start),
         .shuffle_ready(shuffle_ready),
@@ -96,7 +96,7 @@ module controller (
 
     // Adder instantiation
     adder adder_instance(
-        .reset(rst),
+        .reset(!rst),
         .card(card),
         .player_input(player_sum_r),
         .house_input(house_sum_r),
@@ -122,7 +122,7 @@ module controller (
     );
 
     // Main FSM
-    always @ (posedge clk or posedge rst) begin
+    always @ (posedge clk or rst) begin
         
         // Assign IO registers at clock
         user_ready_to_begin_r <= user_ready_to_begin;
@@ -130,7 +130,7 @@ module controller (
         stand_r <= stand;
 
         // If reset pin is high, go to S0
-        if (rst) 
+        if (!rst) 
         begin
             state <= S_RESET;
             house_sum_r = 6'b000000;
@@ -144,7 +144,7 @@ module controller (
             case(state)
 
                 S_RESET:
-                    if(!rst) begin
+                    if(rst) begin
                         state <= S_SHUFFLE_START;
                     end
 
@@ -158,12 +158,12 @@ module controller (
                     end 
 
                 S_SHUFFLE_WAIT:
-                    if(shuffle_ready & user_ready_to_begin_r) begin
+                    if(shuffle_ready & !user_ready_to_begin_r) begin
                         state <= S_DEAL_START;
                     end
                 
                 S_DEAL_START:
-                    if(!user_ready_to_begin_r) begin
+                    if(user_ready_to_begin_r) begin
                         card_start <= 1;
                         state <= S_CARD_START_HOUSE;
                     end

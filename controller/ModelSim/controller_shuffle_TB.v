@@ -11,7 +11,7 @@ Description: This file attempts to excercise a blackjack shuffle sequence.
 module controller_shuffle_TB ();
 
     reg clk = 0;
-    reg rst;
+    reg rst = 1;
     reg user_ready_to_begin = 0;
     reg hit = 0;
     reg stand = 0;
@@ -31,16 +31,12 @@ module controller_shuffle_TB ();
     // Deck shuffle testing
     initial begin
         
-        // Initial conditions:
-        rst = 1;
         // Begin the simulation
         // Reset released after 3 clock cycles
-        #3 rst <= 0;
+        #3 rst <= 1;
 
-        #700 user_ready_to_begin <= 1;
-        #20 user_ready_to_begin <= 0;
-
-
+        #700 user_ready_to_begin <= 0;
+        #20 user_ready_to_begin <= 1;
     end
 	
 	
