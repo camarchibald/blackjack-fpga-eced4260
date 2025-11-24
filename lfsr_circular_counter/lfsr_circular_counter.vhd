@@ -32,11 +32,11 @@ ARCHITECTURE Behaviour OF lfsr_circular_counter IS
 BEGIN
 	PROCESS (CLK, RESET)
 	BEGIN
-		IF (RESET = '1') THEN
+		IF (RESET = '1') THEN -- Reset to first state
 			STATE <= S_SET_START;
 			SET_READY <= '1';
 		
-		ELSIF rising_edge(CLK) THEN
+		ELSIF (rising_edge(CLK)) THEN
 			IF ((STATE = S_SET_START OR STATE = S_SHIFT_SET_START) AND SET_START = '1') THEN	-- Load starting value in, SET_READY low
 				STATE <= S_SETTING;
 				SET_READY <= '0';

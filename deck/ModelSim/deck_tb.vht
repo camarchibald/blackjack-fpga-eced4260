@@ -40,8 +40,10 @@ ARCHITECTURE Behaviour OF testbench IS
    SIGNAL CARD_OVERFLOW: STD_LOGIC;
 
    -- Testbench state
-   TYPE T_STATE IS (S1, S2, S3, S4, S5);
+   TYPE T_STATE IS (S1, S2, S3, S4, S5, S6);
    SIGNAL STATE: T_STATE;
+
+   SIGNAL COUNT: INTEGER := 0; -- Count of cards given before reset signal
 
 BEGIN
    deck_inst: deck PORT MAP (CLK, RESET, SHUFFLE_START, SHUFFLE_READY, SEED, CARD_START, CARD_READY, CARD, CARD_OVERFLOW);
@@ -64,6 +66,7 @@ BEGIN
       IF rising_edge(CLK) THEN
          IF (STATE = S1 AND SHUFFLE_READY = '1') THEN
             SHUFFLE_START <= '1';
+            RESET <= '0';
          ELSIF (STATE = S1 AND SHUFFLE_READY = '0') THEN
             STATE <= S2;
             SHUFFLE_START <= '0';
@@ -77,7 +80,17 @@ BEGIN
          ELSIF (STATE = S4 AND CARD_READY = '1') THEN
             STATE <= S5;
          ELSIF (STATE = S5) THEN
-            STATE <= S3;
+            IF (COUNT > 10) THEN
+               STATE <= S6;
+               RESET <= '1';
+               COUNT <= 0;
+            ELSE
+               STATE <= S3;
+               COUNT <= COUNT + 1;
+            END IF;
+         ELSIF (STATE = S6) THEN
+            STATE <= S1;
+            RESET <= '0';
          END IF;
       END IF;
    END PROCESS;

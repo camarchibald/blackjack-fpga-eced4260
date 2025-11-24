@@ -119,9 +119,17 @@ BEGIN
 	
 	LFSR_SET_VAL <= SEED;
 
-	PROCESS (CLK)
+	PROCESS (CLK, RESET)
 	BEGIN
-		IF rising_edge(CLK) THEN
+		IF (RESET = '1') THEN -- Reset signals and shuffled cards to zero
+			STATE <= S_RESET;
+			SHUFFLE_READY <= '1';
+			CARD_READY <= '1';
+			SHUFFLED_INDEX <= 0;
+			SHUFFLED_CARDS <= (OTHERS => (OTHERS => '0')); -- Don't necessarily need to clear the shuffled cards since they will be overwritten
+																		  -- for clarity in analysis, reset all to zero
+
+		ELSIF (rising_edge(CLK)) THEN
 			IF (STATE = S_RESET AND SHUFFLE_START = '1') THEN -- On shuffle start signal, shuffle ready goes low, initiate setting of lfsr with seed
 				STATE <= S_SHUFFLE_START;
 				SHUFFLE_READY <= '0';
