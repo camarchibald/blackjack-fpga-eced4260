@@ -29,9 +29,9 @@ module controller (
     parameter S_PLAY_START 	        = 4'b1010;
     parameter S_PLAYER_HIT 	        = 4'b1011;
     parameter S_PLAYER_STAND 	    = 4'b1100;
-    parameter S13 	= 4'b1101;
-    parameter S14 	= 4'b1110;
-    parameter S15 	= 4'b1111;
+    parameter S_CP_HOUSE_HIT 	    = 4'b1101;
+    parameter S_CP_PLAYER_BUST      = 4'b1110;
+    parameter S_CP_HOUSE_BUST 	    = 4'b1111;
 
     // Game parameters
     parameter DEALING_ROUND_1   = 2'b00;
