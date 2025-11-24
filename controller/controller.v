@@ -33,6 +33,12 @@ module controller (
     parameter S_CP_PLAYER_BUST      = 5'b01110; // 14
     parameter S_CP_HOUSE_BUST 	    = 5'b01111; // 15
     parameter S_CP_WINNER           = 5'b10000; // 16
+    parameter S_HOUSE_PLAY          = 5'b10001; // 17
+    parameter S_CHECK_PLAYER_BUST   = 5'b10010; // 18
+    parameter S_HOUSE_WIN           = 5'b10011; // 19
+    parameter S_PLAYER_WIN          = 5'b10100; // 20
+    parameter S_DRAW                = 5'b10101; // 21
+    parameter S_WINNER_OUTPUT       = 5'b11110; // 22
 
     // Game parameters
     parameter DEALING_ROUND_1       = 2'b00;    // 0
@@ -243,10 +249,10 @@ module controller (
                             // Next state is adding to house register
                             state <= S_ADD_HOUSE;
                         end
-                        // If game is in playing phase, house checks whether or not to add cards
+                        // If game is in playing phase, house has decided to hit already
                         else if (game_state == PLAYING) begin
-                            // Next state is house checking whether or not to hit
-                            state <= S_CP_HOUSE_HIT;
+                            // Next state is checking if house busted
+                            state <= S_CP_HOUSE_BUST;
                         end
                     end
                 
@@ -306,19 +312,88 @@ module controller (
                     end
 
                 S_CP_HOUSE_HIT:
-                    // If less than 17, go to S_CARD_START_HOUSE
-                    // If more than 17, go to S_CP_WINNER
-                    state <= S_CP_HOUSE_HIT;
+                    begin
+                        // Set comparator value 1
+                        val1_house <= 1;
+                        // Set comparator value 2
+                        val2_17 <= 1;
+                        // Next state is whether or not the house will hit
+                        state <= S_HOUSE_PLAY;
+                    end
+                
+                S_HOUSE_PLAY:
+                    begin
+                        // If house sum is less than 17
+                        if(cp_lt) begin
+                            // Next state is house hit
+                            card_start <= 1;
+                            state <= S_CARD_START_HOUSE;
+                        end
+                        // If house sum is greater than or equal to 17
+                        else begin
+                            // Next state is win comparison
+                            state <= S_CP_WINNER;
+                        end
+                    end
 
                 S_CP_PLAYER_BUST:
-                    // If player sum more than 21, go to S_CP_WINNER
-                    // If player sum less than 21, go to S_CP_HOUSE_HIT
-                    state <= S_CP_PLAYER_BUST;
+                    begin
+                        // Set comparator value 1
+                        val1_player <= 1;
+                        // Set comparator value 2
+                        val2_21 <= 1;
+                        // Next state is checking whether or not player busted
+                        state <= S_CHECK_PLAYER_BUST;
+                    end
+                
+                S_CHECK_PLAYER_BUST:
+                    begin
+                        // If player cards are less than 21
+                        if(cp_lt) begin
+                            // Next state is house turn
+                            state <= S_CP_HOUSE_HIT;
+                        end
+                        // If player cards are equal to 21
+                        else if (cp_eq) begin
+                            // Set game state to done and let house get last play in
+                            game_state <= PLAY_DONE;
+                            // Next state is house checking whether or not to hit
+                            state <= S_CP_HOUSE_HIT;
+                        end
+                        // If player cards are more than 21 (bust)
+                        else begin
+                            // Next state is house win
+                            state <= S_HOUSE_WIN;
+                        end
+                    end
 
                 S_CP_HOUSE_BUST:
                     // If house sum more than 21, go to S_CP_WINNER
                     // If house sum less than 21, go to S_PLAY_START
                     state <= S_CP_HOUSE_BUST;
+
+                S_CP_WINNER:
+                    begin
+                        // Set comparator parameter 1
+                        val1_player = 1;
+                        // Set comparator parameter 2
+                        val2_house = 1;
+                        // Compare output in next state
+                        state <= S_WINNER_OUTPUT;
+                    end
+                
+                S_WINNER_OUTPUT:
+                    begin
+                        // If player less than house, house wins
+                        if(cp_lt)
+                            state <= S_HOUSE_WIN;
+                        // If player equal to house, draw
+                        else if (cp_eq)
+                            state <= S_DRAW;
+                        // If player greater than house, player wins
+                        else
+                            state <= S_PLAYER_WIN;
+                    end
 
             endcase
         end
