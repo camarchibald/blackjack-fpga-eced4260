@@ -60,6 +60,12 @@ module controller (
     // Sum registers
     reg [5:0] player_sum_r = 6'b000000, house_sum_r = 6'b000000;
 
+    // Player and house hands
+    reg [4:0][3:0] player_hand, house_hand;
+    reg [2:0] player_hand_index = 3'b000, house_hand_index = 3'b000;
+
+    // TODO: check house and player hand index SOMEHWERE
+
     // Sum output
     wire [5:0] player_sum_w, house_sum_w;
 
@@ -174,6 +180,8 @@ module controller (
                 
                 S_ADD_HOUSE:
                     begin
+                        house_hand[house_hand_index] <= card;
+                        house_hand_index <= house_hand_index + 3'b001;
                         house_sum_r <= house_sum_w;
                         house_select <= 0;
                         card_start <= 1;
@@ -194,6 +202,8 @@ module controller (
 
                 S_ADD_PLAYER:
                     begin
+                        player_hand[player_hand_index] <= card;
+                        player_hand_index <= player_hand_index + 3'b001;
                         player_sum_r <= player_sum_w;
                         player_select <= 0;
                         if(game_state == DEALING_ROUND_1) begin
