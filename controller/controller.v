@@ -16,22 +16,23 @@ module controller (
 );
 
     // State parameters
-    parameter S_RESET	            = 4'b0000;
-	parameter S_SHUFFLE_START	    = 4'b0001;
-	parameter S_SHUFFLE_DONE	    = 4'b0010;
-	parameter S_DEAL_START 	        = 4'b0011;
-	parameter S_CARD_START_HOUSE 	= 4'b0100;
-	parameter S_GETTING_CARD_HOUSE 	= 4'b0101;
-    parameter S_ADD_HOUSE 	        = 4'b0110;
-    parameter S_CARD_START_PLAYER 	= 4'b0111;
-    parameter S_GETTING_CARD_PLAYER = 4'b1000;
-    parameter S_ADD_PLAYER 	        = 4'b1001;
-    parameter S_PLAY_START 	        = 4'b1010;
-    parameter S_PLAYER_HIT 	        = 4'b1011;
-    parameter S_PLAYER_STAND 	    = 4'b1100;
-    parameter S_CP_HOUSE_HIT 	    = 4'b1101;
-    parameter S_CP_PLAYER_BUST      = 4'b1110;
-    parameter S_CP_HOUSE_BUST 	    = 4'b1111;
+    parameter S_RESET	            = 5'b00000;
+	parameter S_SHUFFLE_START	    = 5'b00001;
+	parameter S_SHUFFLE_WAIT	    = 5'b00010;
+	parameter S_DEAL_START 	        = 5'b00011;
+	parameter S_CARD_START_HOUSE 	= 5'b00100;
+	parameter S_GETTING_CARD_HOUSE 	= 5'b00101;
+    parameter S_ADD_HOUSE 	        = 5'b00110;
+    parameter S_CARD_START_PLAYER 	= 5'b00111;
+    parameter S_GETTING_CARD_PLAYER = 5'b01000;
+    parameter S_ADD_PLAYER 	        = 5'b01001;
+    parameter S_PLAY_START 	        = 5'b01010;
+    parameter S_PLAYER_HIT 	        = 5'b01011;
+    parameter S_PLAYER_STAND 	    = 5'b01100;
+    parameter S_CP_HOUSE_HIT 	    = 5'b01101;
+    parameter S_CP_PLAYER_BUST      = 5'b01110;
+    parameter S_CP_HOUSE_BUST 	    = 5'b01111;
+    parameter S_CP_WINNER           = 5'b10000;
 
     // Game parameters
     parameter DEALING_ROUND_1   = 2'b00;
@@ -43,7 +44,7 @@ module controller (
     reg user_ready_to_begin_r, stand_r, hit_r;
 
     // Main FSM state register
-    reg [3:0] state = S_RESET;
+    reg [4:0] state = S_RESET;
 
     // Game state register
     reg [1:0] game_state = DEALING_ROUND_1;
@@ -145,10 +146,10 @@ module controller (
                     end
                     else if (!shuffle_ready) begin
                         shuffle_start <= 0;
-                        state <= S_SHUFFLE_DONE;
+                        state <= S_SHUFFLE_WAIT;
                     end 
 
-                S_SHUFFLE_DONE:
+                S_SHUFFLE_WAIT:
                     if(shuffle_ready & user_ready_to_begin_r) begin
                         state <= S_DEAL_START;
                     end
@@ -160,13 +161,13 @@ module controller (
                     end
                 
                 S_CARD_START_HOUSE:
-                    if(card_ready) begin
+                    if(!card_ready) begin
                        card_start <= 0;
                        state <= S_GETTING_CARD_HOUSE;
                     end
 
                 S_GETTING_CARD_HOUSE:
-                    if(!card_ready) begin
+                    if(card_ready) begin
                         house_select <= 1;
                         state <= S_ADD_HOUSE;
                     end
@@ -180,13 +181,13 @@ module controller (
                     end
 
                 S_CARD_START_PLAYER:
-                    if(card_ready) begin
+                    if(!card_ready) begin
                         card_start <= 0;
                         state <= S_GETTING_CARD_PLAYER;
                     end
                 
                 S_GETTING_CARD_PLAYER:
-                    if(!card_ready) begin
+                    if(card_ready) begin
                         player_select <= 1;
                         state <= S_ADD_PLAYER;
                     end

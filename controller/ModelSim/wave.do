@@ -12,7 +12,9 @@ add wave -noupdate -label PLAYER_SUM -radix unsigned /controller_shuffle_TB/U1/p
 add wave -noupdate -label HOUSE_SUM -radix unsigned /controller_shuffle_TB/U1/house_sum_r
 
 add wave -noupdate -divider ADDER_SIGNALS
-add wave -noupdate -label CARD -radix unsigned /controller_shuffle_TB/U1/adder_instance/card
+add wave -noupdate -label CARD -radix unsigned  /controller_shuffle_TB/U1/adder_instance/card
+add wave -noupdate -label HOUSE_SELECT          /controller_shuffle_TB/U1/house_select
+add wave -noupdate -label PLAYER_SELECT         /controller_shuffle_TB/U1/player_select
 
 add wave -noupdate -divider DECK_MODULE
 add wave -noupdate -label SHUFFLE_START     /controller_shuffle_TB/U1/deck_instance/shuffle_start
