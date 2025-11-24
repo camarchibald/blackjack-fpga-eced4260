@@ -38,7 +38,7 @@ module controller (
     parameter S_HOUSE_WIN           = 5'b10011; // 19
     parameter S_PLAYER_WIN          = 5'b10100; // 20
     parameter S_DRAW                = 5'b10101; // 21
-    parameter S_WINNER_OUTPUT       = 5'b11110; // 22
+    parameter S_WINNER_OUTPUT       = 5'b10110; // 22
 
     // Game parameters
     parameter DEALING_ROUND_1       = 2'b00;    // 0
@@ -81,7 +81,7 @@ module controller (
     reg player_select, house_select;
 
     // Comparator module control signals
-    reg val1_player, val1_house, val2_player, val2_house, val2_21, val2_17;
+    reg val1_player = 0, val1_house = 0, val2_player = 0, val2_house = 0, val2_21 = 0, val2_17 = 0;
     wire cp_eq, cp_gt, cp_lt;
 
     // Display module control signals
@@ -328,6 +328,9 @@ module controller (
                             // Next state is house hit
                             card_start <= 1;
                             state <= S_CARD_START_HOUSE;
+                            // Reset comparator control signals
+                            val1_house <= 0;
+                            val2_17 <= 0;
                         end
                         // If house sum is greater than or equal to 17
                         else begin
@@ -359,6 +362,9 @@ module controller (
                             game_state <= PLAY_DONE;
                             // Next state is house checking whether or not to hit
                             state <= S_CP_HOUSE_HIT;
+                            // Reset comaparator control signals
+                            val1_player <= 0;
+                            val2_21 <= 0;
                         end
                         // If player cards are more than 21 (bust)
                         else begin
@@ -391,8 +397,11 @@ module controller (
                         else if (cp_eq)
                             state <= S_DRAW;
                         // If player greater than house, player wins
-                        else
+                        else if (cp_gt)
                             state <= S_PLAYER_WIN;
+                        // Reset comparator control signals
+                        val1_player <= 0;
+                        val2_house <= 0;
                     end
 
             endcase

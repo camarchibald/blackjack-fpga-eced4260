@@ -6,7 +6,9 @@ add wave -noupdate -label CLOCK                         /controller_shuffle_TB/c
 add wave -noupdate -label RESET                         /controller_shuffle_TB/rst
 add wave -noupdate -label STATE -radix unsigned         /controller_shuffle_TB/U1/state
 add wave -noupdate -label GAME_STATE -radix unsigned    /controller_shuffle_TB/U1/game_state
-add wave -noupdate -label USER_BUTTON                   /controller_shuffle_TB/user_ready_to_begin
+add wave -noupdate -label START_GAME_BUTTON             /controller_shuffle_TB/user_ready_to_begin
+add wave -noupdate -label HIT_BUTTON                    /controller_shuffle_TB/hit
+add wave -noupdate -label STAND_BUTTON                  /controller_shuffle_TB/stand
 
 add wave -noupdate -divider SUM_REGISTERS
 add wave -noupdate -label PLAYER_SUM -radix unsigned /controller_shuffle_TB/U1/player_sum_r
@@ -16,6 +18,17 @@ add wave -noupdate -divider ADDER_SIGNALS
 add wave -noupdate -label CARD -radix unsigned  /controller_shuffle_TB/U1/adder_instance/card
 add wave -noupdate -label HOUSE_SELECT          /controller_shuffle_TB/U1/house_select
 add wave -noupdate -label PLAYER_SELECT         /controller_shuffle_TB/U1/player_select
+
+add wave -noupdate -divider COMPARATOR_SIGNALS
+add wave -noupdate -label val1_player           /controller_shuffle_TB/U1/val1_player
+add wave -noupdate -label val2_player           /controller_shuffle_TB/U1/val2_player
+add wave -noupdate -label val1_house            /controller_shuffle_TB/U1/val1_house
+add wave -noupdate -label val2_house            /controller_shuffle_TB/U1/val2_house
+add wave -noupdate -label val2_17               /controller_shuffle_TB/U1/val2_17
+add wave -noupdate -label val2_21               /controller_shuffle_TB/U1/val2_21
+add wave -noupdate -label LESS_THAN             /controller_shuffle_TB/U1/cp_lt
+add wave -noupdate -label EQUAL_TO              /controller_shuffle_TB/U1/cp_eq
+add wave -noupdate -label GREATER_THAN          /controller_shuffle_TB/U1/cp_gt
 
 add wave -noupdate -divider DISPLAY_MODULE_SIGNALS
 add wave -noupdate -label PLAYER_HAND           /controller_shuffle_TB/U1/player_hand
