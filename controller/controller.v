@@ -122,7 +122,7 @@ module controller (
     );
 
     // Main FSM
-    always @ (posedge clk or rst) begin
+    always @ (posedge clk or negedge rst) begin
         
         // Assign IO registers at clock
         user_ready_to_begin_r <= user_ready_to_begin;
