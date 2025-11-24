@@ -22,7 +22,8 @@ module controller_shuffle_TB ();
         .rst(rst),
         .user_ready_to_begin(user_ready_to_begin),
         .hit(),
-        .stand()
+        .stand(),
+        .state_out()
     );
 
     // Main clock

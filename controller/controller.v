@@ -12,7 +12,8 @@ module controller (
     input rst,
     input user_ready_to_begin,
     input hit,
-    input stand
+    input stand,
+    output [4:0] state_out // State hardware
 );
 
     // State parameters
@@ -45,6 +46,7 @@ module controller (
 
     // Main FSM state register
     reg [4:0] state = S_RESET;
+    assign state_out = state;
 
     // Game state register
     reg [1:0] game_state = DEALING_ROUND_1;
@@ -219,21 +221,24 @@ module controller (
                     end
                 
                 S_PLAY_START:
-                    if(hit_r) begin
+                    if(!hit_r) begin
                         state <= S_PLAYER_HIT;
                     end
-                    else if (stand_r) begin
+                    else if (!stand_r) begin
                         state <= S_PLAYER_STAND;
                     end
 
                 S_PLAYER_HIT:
-                    if(!hit_r) begin
-                        state <= S_PLAYER_HIT;
+                    if(hit_r) begin
+                        // Do hit
+                        state <= S_PLAY_START;
                     end
 
                 S_PLAYER_STAND:
-                    state <= S_PLAYER_STAND;
-
+                    if(stand_r) begin
+                        // Do stand
+                        state <= S_PLAY_START;
+                    end
             endcase
         end
 
