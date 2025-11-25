@@ -15,6 +15,7 @@ module controller_shuffle_TB ();
     reg user_ready_to_begin = 0;
     reg hit = 0;
     reg stand = 0;
+    reg [5:0] seed = 6'b001010;
 
     // Instantiate controller
     controller U1 (
@@ -23,7 +24,8 @@ module controller_shuffle_TB ();
         .user_ready_to_begin(user_ready_to_begin),
         .hit(),
         .stand(),
-        .state_out()
+        .state_out(),
+        .seed(seed)
     );
 
     // Main clock
