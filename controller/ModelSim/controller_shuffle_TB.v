@@ -33,12 +33,14 @@ module controller_shuffle_TB ();
         
         // Begin the simulation
         // Reset released after 3 clock cycles
-        #3 rst <= 1;
+        #0 rst <= 1;
 
-        #700 user_ready_to_begin <= 0;
-        #20 user_ready_to_begin <= 1;
-        #50 hit = 0;
-        #20 hit = 1;
+        #700 user_ready_to_begin <= 0;      // Time = 700 ns 
+        #20 user_ready_to_begin <= 1;           // Time = 720 ns
+        #50 hit = 0;                            // Time = 770 ns
+        #20 hit = 1;                            // Time = 790 ns
+        #40 hit = 0;                            // Time = 830 ns
+        #20 hit = 1;                            // Time = 850 ns
     end
 	
 	

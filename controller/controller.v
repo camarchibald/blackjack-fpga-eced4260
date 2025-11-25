@@ -60,7 +60,7 @@ module controller (
 
     // Deck module data registers
     wire [3:0] card;
-    reg [5:0] seed = 5'b00111;
+    reg [5:0] seed = 5'b00001;
 
     // Sum registers
     reg [5:0] player_sum_r = 6'b000000, house_sum_r = 6'b000000;
