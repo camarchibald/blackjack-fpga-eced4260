@@ -12,9 +12,9 @@ module controller_shuffle_TB ();
 
     reg clk = 0;
     reg rst = 1;
-    reg user_ready_to_begin = 0;
-    reg hit = 0;
-    reg stand = 0;
+    reg user_ready_to_begin = 1;
+    reg hit = 1;
+    reg stand = 1;
     reg [5:0] seed = 6'b001010;
 
     // Instantiate controller
@@ -22,8 +22,8 @@ module controller_shuffle_TB ();
         .clk(clk),
         .rst(rst),
         .user_ready_to_begin(user_ready_to_begin),
-        .hit(),
-        .stand(),
+        .hit(hit),
+        .stand(stand),
         .state_out(),
         .seed(seed)
     );
@@ -42,7 +42,7 @@ module controller_shuffle_TB ();
         #20 user_ready_to_begin <= 1;           // Time = 720 ns
         #50 hit = 0;                            // Time = 770 ns
         #20 hit = 1;                            // Time = 790 ns
-        #40 hit = 0;                            // Time = 830 ns
+        #100 hit = 0;                         // Time = 890 ns
         #20 hit = 1;                            // Time = 850 ns
     end
 	

@@ -127,11 +127,11 @@ module controller (
         .lt(cp_lt)
     );
 
-    // Display instantiation
+    /*// Display instantiation
     display (
         .game_state(game_state);
         .cards_to_display(player_hand)
-    );
+    );*/
 
     // Main FSM
     always @ (posedge clk or negedge rst) begin
