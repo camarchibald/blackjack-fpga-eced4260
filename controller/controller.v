@@ -12,7 +12,9 @@ module controller (
     input rst,
     input user_ready_to_begin,
     input hit,
-    input stand
+    input stand,
+    input [5:0] seed,
+    output [4:0] state_out // State hardware
 );
     // State parameters
     parameter S_RESET	            = 5'b00000; // 0
@@ -50,6 +52,7 @@ module controller (
 
     // Main FSM state register
     reg [4:0] state = S_RESET;
+    assign state_out = state;
 
     // Game state register
     reg [1:0] game_state = DEALING_ROUND_1;
@@ -60,7 +63,7 @@ module controller (
 
     // Deck module data registers
     wire [3:0] card;
-    reg [5:0] seed = 5'b000001;
+    //reg [5:0] seed = 6'b101010;
 
     // Sum registers
     reg [5:0] player_sum_r = 6'b000000, house_sum_r = 6'b000000;
@@ -131,7 +134,7 @@ module controller (
     );
 
     // Main FSM
-    always @ (posedge clk or rst) begin
+    always @ (posedge clk or negedge rst) begin
         
         // Assign IO registers at clock
         user_ready_to_begin_r <= user_ready_to_begin;
