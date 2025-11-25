@@ -60,7 +60,7 @@ module controller (
 
     // Deck module data registers
     wire [3:0] card;
-    reg [5:0] seed = 5'b00001;
+    reg [5:0] seed = 5'b000001;
 
     // Sum registers
     reg [5:0] player_sum_r = 6'b000000, house_sum_r = 6'b000000;
@@ -122,6 +122,12 @@ module controller (
         .eq(cp_eq),
         .gt(cp_gt),
         .lt(cp_lt)
+    );
+
+    // Display instantiation
+    display (
+        .game_state(game_state);
+        .cards_to_display(player_hand)
     );
 
     // Main FSM
