@@ -60,7 +60,7 @@ module controller (
 
     // Deck module data registers
     wire [3:0] card;
-    reg [5:0] seed = 5'b01010;
+    reg [5:0] seed = 5'b00111;
 
     // Sum registers
     reg [5:0] player_sum_r = 6'b000000, house_sum_r = 6'b000000;
@@ -273,6 +273,9 @@ module controller (
                         end
                         // If in the playing stage of the game
                         else if (game_state == PLAYING) begin
+                            // Setup comparator inputs
+                            val1_house <= 1;
+                            val2_21 <= 1;
                             // Next state is house compare bust
                             state <= S_CP_HOUSE_BUST;
                         end
@@ -284,10 +287,12 @@ module controller (
                     end
                 
                 S_PLAY_START:
-                    if(!hit_r) begin                // Player has chosen to hit
+                    // Player has pressed hit button
+                    if(!hit_r) begin
                         state <= S_PLAYER_HIT;
                     end
-                    else if (!stand_r) begin        // Player has chosen to stand
+                    // Player has pressed stand button
+                    else if (!stand_r) begin
                         state <= S_PLAYER_STAND;
                     end
 
@@ -304,7 +309,6 @@ module controller (
                     if(stand_r) begin
                         // Next state is house play
                         state <= S_CP_HOUSE_HIT;
-                        // Set comparator controls to inform house play in next state
                     end
 
                 S_CP_HOUSE_HIT:
@@ -330,6 +334,8 @@ module controller (
                         end
                         // If house sum is greater than or equal to 17
                         else begin
+                            // Set game state to done
+                            game_state <= PLAY_DONE;
                             // Next state is win comparison
                             state <= S_CP_WINNER;
                         end
@@ -347,6 +353,10 @@ module controller (
                 
                 S_CHECK_PLAYER_BUST:
                     begin
+                        // Reset comaparator control signals
+                        val1_player <= 0;
+                        val2_21 <= 0;
+
                         // If player cards are less than 21
                         if(cp_lt) begin
                             // Next state is house turn
@@ -358,21 +368,33 @@ module controller (
                             game_state <= PLAY_DONE;
                             // Next state is house checking whether or not to hit
                             state <= S_CP_HOUSE_HIT;
-                            // Reset comaparator control signals
-                            val1_player <= 0;
-                            val2_21 <= 0;
                         end
                         // If player cards are more than 21 (bust)
-                        else begin
+                        else if (cp_gt) begin
                             // Next state is house win
                             state <= S_HOUSE_WIN;
                         end
                     end
 
                 S_CP_HOUSE_BUST:
-                    // If house sum more than 21, go to S_CP_WINNER
-                    // If house sum less than 21, go to S_PLAY_START
-                    state <= S_CP_HOUSE_BUST;
+                    begin
+                        // Reset comaparator control signals
+                        val1_house <= 0;
+                        val2_21 <= 0;
+
+                        // If house cards are less than or equal to 21
+                        if(cp_lt || cp_eq) begin
+                            // Next state is player turn
+                            state <= S_PLAY_START;
+                        end
+                        // If house cards are greater than 21
+                        else if (cp_gt) begin
+                            // Set game state to done playing
+                            game_state <= PLAY_DONE;
+                            // Next state is player win
+                            state <= S_PLAYER_WIN;
+                        end
+                    end
 
                 S_CP_WINNER:
                     begin
