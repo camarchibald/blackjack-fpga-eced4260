@@ -67,13 +67,16 @@ module controller (
     reg [1:0] game_state = DEALING_ROUND_1;
     assign game_state_out = game_state;
 
+    // Outcome of game
+    reg [1:0] outcome = 2'b00;
+    assign game_outcome = outcome;
+
     // Deck module control signals
     reg shuffle_start = 0, card_start = 0;
     wire shuffle_ready, card_ready, card_overflow, shuffling;
 
     // Deck module data registers
     wire [3:0] card;
-    //reg [5:0] seed = 6'b101010;
 
     // Sum registers
     reg [5:0] player_sum_r = 6'b000000, house_sum_r = 6'b000000;
@@ -229,6 +232,7 @@ module controller (
                     if(rst) begin
                         // Next state is shuffle start state
                         state <= S_SHUFFLE_START;
+                        outcome <= 2'b00;
                     end
 
                 S_SHUFFLE_START:
@@ -495,6 +499,21 @@ module controller (
                         // Reset comparator control signals
                         val1_player <= 0;
                         val2_house <= 0;
+                    end
+
+                S_HOUSE_WIN:
+                    begin
+                        outcome <= 2'b10;
+                    end
+        
+                S_DRAW:
+                    begin
+                        outcome <= 2'b11;
+                    end
+
+                S_PLAYER_WIN:
+                    begin
+                        outcome <= 2'b01;
                     end
 
             endcase
