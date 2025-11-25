@@ -18,7 +18,12 @@ module controller (
     output [1:0] game_outcome,      // Winner outcome LED's
     output [4:0] state_out,         // FSM state LED's
     output [1:0] game_state_out,    // Gamse state LED's
-    output [6:0] hand_display [5:0] // Hand display on 7-segment displays
+    output [6:0] hand_display_0,    // Hand display on 7-segment displays
+    output [6:0] hand_display_1,
+    output [6:0] hand_display_2,
+    output [6:0] hand_display_3,
+    output [6:0] hand_display_4,
+    output [6:0] hand_display_5
 );
     // State parameters
     parameter S_RESET	            = 5'b00000; // 0
@@ -90,46 +95,55 @@ module controller (
     wire cp_eq, cp_gt, cp_lt;
 
     // Display module control signals
-    wire [3:0] display_hand [4:0];
-    wire [3:0] display_char;
+    reg [3:0] bcd_hand [4:0];
+    reg [3:0] bcd_char;
 
     // Display control logics
     always @ (hand_select)
     begin
         if(!hand_select) begin // Display player hand
-            display_char <= 4'b1111;
-            display_hand <= player_hand;
+            bcd_char <= 4'b1111;
+            bcd_hand[0] <= player_hand[0];
+            bcd_hand[1] <= player_hand[1];
+            bcd_hand[2] <= player_hand[2];
+            bcd_hand[3] <= player_hand[3];
+            bcd_hand[4] <= player_hand[4];
+
         end
         else begin // Display house hand
-            display_char <= 4'b1110;
-            display_hand <= house_hand;
+            bcd_char <= 4'b1110;
+            bcd_hand[0] <= house_hand[0];
+            bcd_hand[1] <= house_hand[1];
+            bcd_hand[2] <= house_hand[2];
+            bcd_hand[3] <= house_hand[3];
+            bcd_hand[4] <= house_hand[4];
         end
     end
 
     // Display instantiation
     bcd bcd_6(
-		.input_char(display_char),
-		.segment_output(hand_display[5])
+		.input_char(bcd_char),
+		.segment_output(hand_display_5)
 	);
     bcd bcd_5(
-		.input_char(display_hand[4]),
-		.segment_output(hand_display[4])
+		.input_char(bcd_hand[4]),
+		.segment_output(hand_display_4)
 	);
     bcd bcd_4(
-		.input_char(display_hand[3]),
-		.segment_output(hand_display[3])
+		.input_char(bcd_hand[3]),
+		.segment_output(hand_display_3)
 	);
     bcd bcd_3(
-		.input_char(display_hand[2]),
-		.segment_output(hand_display[2])
+		.input_char(bcd_hand[2]),
+		.segment_output(hand_display_2)
 	);
     bcd bcd_2(
-		.input_char(display_hand[1]),
-		.segment_output(hand_display[1])
+		.input_char(bcd_hand[1]),
+		.segment_output(hand_display_1)
 	);
     bcd bcd_1(
-		.input_char(display_hand[0]),
-		.segment_output(hand_display[0])
+		.input_char(bcd_hand[0]),
+		.segment_output(hand_display_0)
 	);
 
     // Deck instantiation

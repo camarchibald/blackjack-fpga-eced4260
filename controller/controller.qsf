@@ -80,4 +80,15 @@ set_location_assignment PIN_AC9 -to seed[3] -comment SW7
 set_location_assignment PIN_AD10 -to seed[4] -comment SW8
 set_location_assignment PIN_AE12 -to seed[5] -comment SW9
 set_location_assignment PIN_AD11 -to seed[0] -comment SW4
+set_location_assignment PIN_AB12 -to hand_select -comment SW0
+set_location_assignment PIN_W16 -to game_outcome[1] -comment LED1
+set_location_assignment PIN_V18 -to game_state_out[0] -comment LED3
+set_location_assignment PIN_W17 -to game_state_out[1] -comment LED4
+set_location_assignment PIN_AE26 -to hand_display_0[0] -comment 7SEG0_0
+set_location_assignment PIN_AE27 -to hand_display_0[1] -comment 7SEG0_1
+set_location_assignment PIN_AE28 -to hand_display_0[2] -comment 7SEG0_2
+set_location_assignment PIN_AG27 -to hand_display_0[3] -comment 7SEG0_3
+set_location_assignment PIN_AF28 -to hand_display_0[4] -comment 7SEG0_4
+set_location_assignment PIN_AG28 -to hand_display_0[5] -comment 7SEG0_5
+set_location_assignment PIN_V16 -to game_outcome[0] -comment LED0
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
