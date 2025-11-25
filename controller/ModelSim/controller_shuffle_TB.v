@@ -64,6 +64,7 @@ module controller_shuffle_TB ();
         #20 hit = 1;                            // Time = 790 ns
         #100 hit = 0;                         // Time = 890 ns
         #20 hit = 1;                            // Time = 850 ns
+        hand_select = 0;
     end
 	
 	

@@ -99,7 +99,7 @@ module controller (
     reg [3:0] bcd_char;
 
     // Display control logics
-    always @ (hand_select)
+    always @ (hand_select or player_hand or house_hand or rst)
     begin
         if(!hand_select) begin // Display player hand
             bcd_char <= 4'b1111;
@@ -203,6 +203,19 @@ module controller (
             player_sum_r <= 6'b000000;
             house_hand_index <= 3'b000;
             player_hand_index <= 3'b000;
+
+            house_hand[0] <= 4'b0000;
+            house_hand[1] <= 4'b0000;
+            house_hand[2] <= 4'b0000;
+            house_hand[3] <= 4'b0000;
+            house_hand[4] <= 4'b0000;
+
+            player_hand[0] <= 4'b0000;
+            player_hand[1] <= 4'b0000;
+            player_hand[2] <= 4'b0000;
+            player_hand[3] <= 4'b0000;
+            player_hand[4] <= 4'b0000;
+
         end
 
         else 
@@ -503,21 +516,21 @@ module bcd(
 		case(input_char)
 
             4'b0000: segment_output = 7'b1111111; // 0
-			4'b0001: segment_output = 7'b0001000; // 1 (ace)
-			4'b0010: segment_output = 7'b0010010; // 2
-			4'b0011: segment_output = 7'b0000110; // 3
-			4'b0100: segment_output = 7'b1001100; // 4
-			4'b0101: segment_output = 7'b0100100; // 5
-			4'b0110: segment_output = 7'b0100000; // 6
-			4'b0111: segment_output = 7'b0001111; // 7
-			4'b1000: segment_output = 7'b0000000; // 8
-			4'b1001: segment_output = 7'b0001100; // 9
-            4'b1010: segment_output = 7'b0000001; // 10
-            4'b1011: segment_output = 7'b0000001; // J
-            4'b1100: segment_output = 7'b0000001; // Q
-            4'b1101: segment_output = 7'b0000001; // K
-            4'b1110: segment_output = 7'b0110111; // H[ouse win]
-            4'b1111: segment_output = 7'b1100111; // P[layer win]
+            4'b0001: segment_output = 7'b0001000; // 1 (ace)
+            4'b0010: segment_output = 7'b0100100; // 2
+            4'b0011: segment_output = 7'b0110000; // 3
+            4'b0100: segment_output = 7'b0011001; // 4
+            4'b0101: segment_output = 7'b0010010; // 5
+            4'b0110: segment_output = 7'b0000010; // 6
+            4'b0111: segment_output = 7'b1111000; // 7
+            4'b1000: segment_output = 7'b0000000; // 8
+            4'b1001: segment_output = 7'b0011000; // 9
+            4'b1010: segment_output = 7'b1000000; // 10
+            4'b1011: segment_output = 7'b1000000; // J
+            4'b1100: segment_output = 7'b1000000; // Q
+            4'b1101: segment_output = 7'b1000000; // K
+            4'b1110: segment_output = 7'b0001001; // H[ouse win]
+            4'b1111: segment_output = 7'b0001100; // P[layer win]
             default: segment_output = 7'b1111111; // invalid
 
 		endcase
