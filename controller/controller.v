@@ -13,8 +13,12 @@ module controller (
     input user_ready_to_begin,
     input hit,
     input stand,
-    input [5:0] seed,
-    output [4:0] state_out // State hardware
+    input [5:0] seed,               // Seed input switches
+    input hand_select,              // Display deck control switch
+    output [1:0] game_outcome,      // Winner outcome LED's
+    output [4:0] state_out,         // FSM state LED's
+    output [1:0] game_state_out,    // Gamse state LED's
+    output [6:0] hand_display [5:0] // Hand display on 7-segment displays
 );
     // State parameters
     parameter S_RESET	            = 5'b00000; // 0
@@ -56,6 +60,7 @@ module controller (
 
     // Game state register
     reg [1:0] game_state = DEALING_ROUND_1;
+    assign game_state_out = game_state;
 
     // Deck module control signals
     reg shuffle_start = 0, card_start = 0;
@@ -85,7 +90,47 @@ module controller (
     wire cp_eq, cp_gt, cp_lt;
 
     // Display module control signals
-    wire display_ready;
+    wire [3:0] display_hand [4:0];
+    wire [3:0] display_char;
+
+    // Display control logics
+    always @ (hand_select)
+    begin
+        if(!hand_select) begin // Display player hand
+            display_char <= 4'b1111;
+            display_hand <= player_hand;
+        end
+        else begin // Display house hand
+            display_char <= 4'b1110;
+            display_hand <= house_hand;
+        end
+    end
+
+    // Display instantiation
+    bcd bcd_6(
+		.input_char(display_char),
+		.segment_output(hand_display[5])
+	);
+    bcd bcd_5(
+		.input_char(display_hand[4]),
+		.segment_output(hand_display[4])
+	);
+    bcd bcd_4(
+		.input_char(display_hand[3]),
+		.segment_output(hand_display[3])
+	);
+    bcd bcd_3(
+		.input_char(display_hand[2]),
+		.segment_output(hand_display[2])
+	);
+    bcd bcd_2(
+		.input_char(display_hand[1]),
+		.segment_output(hand_display[1])
+	);
+    bcd bcd_1(
+		.input_char(display_hand[0]),
+		.segment_output(hand_display[0])
+	);
 
     // Deck instantiation
     deck deck_instance(
@@ -126,12 +171,6 @@ module controller (
         .gt(cp_gt),
         .lt(cp_lt)
     );
-
-    /*// Display instantiation
-    display (
-        .game_state(game_state);
-        .cards_to_display(player_hand)
-    );*/
 
     // Main FSM
     always @ (posedge clk or negedge rst) begin
@@ -435,5 +474,39 @@ module controller (
         end
 
     end
+
+endmodule
+
+// BCD conversion module
+module bcd(
+		input wire [3:0] input_char,
+		output reg [6:0] segment_output
+	);
+	
+	// The output segment format is ordered as follows: 7'b abcedfg
+	always @ (*) 
+    begin
+		case(input_char)
+
+            4'b0000: segment_output = 7'b1111111; // 0
+			4'b0001: segment_output = 7'b0001000; // 1 (ace)
+			4'b0010: segment_output = 7'b0010010; // 2
+			4'b0011: segment_output = 7'b0000110; // 3
+			4'b0100: segment_output = 7'b1001100; // 4
+			4'b0101: segment_output = 7'b0100100; // 5
+			4'b0110: segment_output = 7'b0100000; // 6
+			4'b0111: segment_output = 7'b0001111; // 7
+			4'b1000: segment_output = 7'b0000000; // 8
+			4'b1001: segment_output = 7'b0001100; // 9
+            4'b1010: segment_output = 7'b0000001; // 10
+            4'b1011: segment_output = 7'b0000001; // J
+            4'b1100: segment_output = 7'b0000001; // Q
+            4'b1101: segment_output = 7'b0000001; // K
+            4'b1110: segment_output = 7'b0110111; // H[ouse win]
+            4'b1111: segment_output = 7'b1100111; // P[layer win]
+            default: segment_output = 7'b1111111; // invalid
+
+		endcase
+	end
 
 endmodule
