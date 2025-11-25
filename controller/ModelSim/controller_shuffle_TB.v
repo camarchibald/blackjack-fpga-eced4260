@@ -16,6 +16,17 @@ module controller_shuffle_TB ();
     reg hit = 1;
     reg stand = 1;
     reg [5:0] seed = 6'b001010;
+    reg hand_select = 1;
+    wire [1:0] game_outcome;      // Winner outcome LED's
+    wire [4:0] state_out;         // FSM state LED's
+    wire [1:0] game_state_out;    // Gamse state LED's
+    wire [6:0] hand_display_0;    // Hand display on 7-segment displays
+    wire [6:0] hand_display_1;
+    wire [6:0] hand_display_2;
+    wire [6:0] hand_display_3;
+    wire [6:0] hand_display_4;
+    wire [6:0] hand_display_5;
+    
 
     // Instantiate controller
     controller U1 (
@@ -24,8 +35,17 @@ module controller_shuffle_TB ();
         .user_ready_to_begin(user_ready_to_begin),
         .hit(hit),
         .stand(stand),
+        .seed(seed),
+        .hand_select(hand_select),
+        .game_outcome(game_outcome),
         .state_out(),
-        .seed(seed)
+        .game_state_out(game_state_out),
+        .hand_display_0(hand_display_0),
+        .hand_display_1(hand_display_1),
+        .hand_display_2(hand_display_2),
+        .hand_display_3(hand_display_3),
+        .hand_display_4(hand_display_4),
+        .hand_display_5(hand_display_5)
     );
 
     // Main clock

@@ -34,7 +34,6 @@ add wave -noupdate -divider DISPLAY_MODULE_SIGNALS
 add wave -noupdate -label PLAYER_HAND           /controller_shuffle_TB/U1/player_hand
 add wave -noupdate -label HOUSE_HAND            /controller_shuffle_TB/U1/house_hand
 
-
 add wave -noupdate -divider DECK_MODULE
 add wave -noupdate -label SHUFFLE_START     /controller_shuffle_TB/U1/deck_instance/shuffle_start
 add wave -noupdate -label SHUFFLE_READY     /controller_shuffle_TB/U1/deck_instance/shuffle_ready
@@ -53,6 +52,16 @@ add wave -noupdate -label LFSR_SHIFT_READY  /controller_shuffle_TB/U1/deck_insta
 add wave -noupdate -divider DECK_INTERNAL_STATES
 add wave -noupdate -label DECK -radix unsigned /controller_shuffle_TB/U1/deck_instance/SHUFFLED_CARDS
 add wave -noupdate -label LFSR -radix unsigned /controller_shuffle_TB/U1/deck_instance/lfsr/OUTPUT
+
+add wave -noupdate -divider HAND_DISPLAY
+add wave -noupdate -label HAND_SELECT /controller_shuffle_TB/U1/hand_select
+add wave -noupdate -label GAME_OUTCOME /controller_shuffle_TB/U1/game_outcome
+add wave -noupdate -label HAND_DISPLAY_0 /controller_shuffle_TB/U1/hand_display_0
+add wave -noupdate -label HAND_DISPLAY_1 /controller_shuffle_TB/U1/hand_display_1
+add wave -noupdate -label HAND_DISPLAY_2 /controller_shuffle_TB/U1/hand_display_2
+add wave -noupdate -label HAND_DISPLAY_3 /controller_shuffle_TB/U1/hand_display_3
+add wave -noupdate -label HAND_DISPLAY_4 /controller_shuffle_TB/U1/hand_display_4
+add wave -noupdate -label HAND_DISPLAY_5 /controller_shuffle_TB/U1/hand_display_5
 
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {50000000 ps} 0}
