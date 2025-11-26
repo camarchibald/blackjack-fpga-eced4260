@@ -15,9 +15,10 @@ add wave -noupdate -label SEED              /controller_exhaustive_tb/seed
 add wave -noupdate -divider LEDS
 add wave -noupdate -label GAME_OUTCOME /controller_exhaustive_tb/game_outcome
 
-add wave -noupdate -divider OTHER
+add wave -noupdate -divider INFO
 add wave -noupdate -label PLAYER_HAND -radix unsigned /controller_exhaustive_tb/player_hand
 add wave -noupdate -label HOUSE_HAND -radix unsigned /controller_exhaustive_tb/house_hand
+add wave -noupdate -label STATE -radix unsigned /controller_exhaustive_tb/state
 
 
 TreeUpdate [SetDefaultTree]
