@@ -29,6 +29,8 @@ add wave -noupdate -label val2_21               /controller_shuffle_TB/U1/val2_2
 add wave -noupdate -label LESS_THAN             /controller_shuffle_TB/U1/cp_lt
 add wave -noupdate -label EQUAL_TO              /controller_shuffle_TB/U1/cp_eq
 add wave -noupdate -label GREATER_THAN          /controller_shuffle_TB/U1/cp_gt
+add wave -noupdate -label COMPARATOR_IN1 -radix unsigned              /controller_shuffle_TB/U1/comparator_instance/IN1_ARR
+add wave -noupdate -label COMPARATOR_IN2  -radix unsigned             /controller_shuffle_TB/U1/comparator_instance/IN2_ARR
 
 add wave -noupdate -divider DISPLAY_MODULE_SIGNALS
 add wave -noupdate -label PLAYER_HAND           /controller_shuffle_TB/U1/player_hand

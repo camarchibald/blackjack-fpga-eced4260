@@ -179,7 +179,7 @@ module controller (
         .player_input(player_sum_r),
         .house_input(house_sum_r),
         .val1_player(val1_player),
-        .val1_house(val2_player),
+        .val1_house(val1_house),
         .val2_player(val2_player),
         .val2_house(val2_house),
         .val2_21(val2_21),

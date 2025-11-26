@@ -15,7 +15,7 @@ module controller_shuffle_TB ();
     reg user_ready_to_begin = 1;
     reg hit = 1;
     reg stand = 1;
-    reg [5:0] seed = 6'b001010;
+    reg [5:0] seed = 6'b000010;
     reg hand_select = 1;
     wire [1:0] game_outcome;      // Winner outcome LED's
     wire [4:0] state_out;         // FSM state LED's
@@ -60,10 +60,10 @@ module controller_shuffle_TB ();
 
         #700 user_ready_to_begin <= 0;      // Time = 700 ns 
         #20 user_ready_to_begin <= 1;           // Time = 720 ns
-        #50 hit = 0;                            // Time = 770 ns
-        #20 hit = 1;                            // Time = 790 ns
-        #100 hit = 0;                         // Time = 890 ns
-        #20 hit = 1;                            // Time = 850 ns
+        #50 stand = 0;                            // Time = 770 ns
+        #20 stand = 1;                            // Time = 790 ns
+        //#100 hit = 0;                         // Time = 890 ns
+        //#20 hit = 1;                            // Time = 850 ns
         hand_select = 0;
     end
 	
