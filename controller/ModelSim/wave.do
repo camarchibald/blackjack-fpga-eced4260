@@ -33,6 +33,8 @@ add wave -noupdate -label GREATER_THAN          /controller_shuffle_TB/U1/cp_gt
 add wave -noupdate -divider DISPLAY_MODULE_SIGNALS
 add wave -noupdate -label PLAYER_HAND           /controller_shuffle_TB/U1/player_hand
 add wave -noupdate -label HOUSE_HAND            /controller_shuffle_TB/U1/house_hand
+add wave -noupdate -label PLAYER_HAND_INDEX     /controller_shuffle_TB/U1/player_hand_index
+add wave -noupdate -label HOUSE_HAND_INDEX     /controller_shuffle_TB/U1/house_hand_index
 
 add wave -noupdate -divider DECK_MODULE
 add wave -noupdate -label SHUFFLE_START     /controller_shuffle_TB/U1/deck_instance/shuffle_start

@@ -251,14 +251,14 @@ module controller (
 
                 S_SHUFFLE_WAIT:
                     // If shuffle is complete and user has pressed start button
-                    if(shuffle_ready & !user_ready_to_begin_r) begin
+                    if(shuffle_ready && !user_ready_to_begin_r) begin
                         // Next state is start of dealing
                         state <= S_DEAL_START;
                     end
                 
                 S_DEAL_START:
                     // User has released start button
-                    if(user_ready_to_begin_r & card_ready) begin
+                    if(user_ready_to_begin_r && card_ready) begin
                         // Send card start command
                         card_start <= 1;
                         // Next state is getting card for player
@@ -351,6 +351,10 @@ module controller (
                         else if(game_state == DEALING_ROUND_2) begin
                             // Next game state is the player's first turn
                             game_state <= PLAYING;
+                            // Set comparator value 1
+                            val1_player <= 1;
+                            // Set comparator value 2s
+                            val2_21 <= 1;
                             // Next state is checking that player didn't bust in the deal
                             state <= S_CP_PLAYER_BUST;
                         end
@@ -365,13 +369,19 @@ module controller (
                     end
                 
                 S_PLAY_START:
-                    // Player has pressed hit button
-                    if((!hit_r) & (player_hand_index < 3'b100)) begin
-                        state <= S_PLAYER_HIT;
-                    end
-                    // Player has pressed stand button or has hit times already
-                    else begin
+                    // Player has 5 cards
+                    if(player_hand_index > 3'b100) begin
                         state <= S_PLAYER_STAND;
+                    end
+                    else begin
+                        // Player has pressed hit button
+                        if(!hit_r) begin
+                            state <= S_PLAYER_HIT;
+                        end 
+                        // Player has pressed stand button
+                        else if(!stand_r) begin
+                            state <= S_PLAYER_STAND;
+                        end
                     end
 
                 S_PLAYER_HIT:
@@ -385,8 +395,11 @@ module controller (
                 S_PLAYER_STAND:
                     // Player has released stand button
                     if(stand_r) begin
-                        // Next state is house play
-                        state <= S_CP_HOUSE_HIT;
+                        // Next state is check if house busted
+                        val1_house <= 1;
+                        val2_21 <= 1;
+
+                        state <= S_CP_HOUSE_BUST;
                     end
 
                 S_CP_HOUSE_HIT:
@@ -396,7 +409,7 @@ module controller (
                         val2_17 <= 0;
                         
                         // If house sum is less than 17
-                        if(cp_lt & (house_hand_index < 3'b100)) begin
+                        if(cp_lt && (house_hand_index <= 3'b100)) begin
                             // Next state is house hit
                             card_start <= 1;
                             state <= S_CARD_START_HOUSE;
@@ -416,19 +429,10 @@ module controller (
                         val1_player <= 0;
                         val2_21 <= 0;
 
-                        // If player cards are less than 21
-                        if(cp_lt) begin
+                        // If player cards are less than or equal to 21
+                        if(cp_lt || cp_eq) begin
                             // Next state is player turn again
                             state <= S_PLAY_START;
-                        end
-                        // If player cards are equal to 21
-                        else if (cp_eq) begin
-                            // Player has to stand now, (they can't play another card or they bust)
-                            // Set comparator flags for next comparison (house bust)
-                            val1_house <= 1;
-                            val2_21 <= 1;
-                            // Next state is checking whether house busted from deal
-                            state <= S_CP_HOUSE_BUST;
                         end
                         // If player cards are more than 21 (bust)
                         else if (cp_gt) begin
