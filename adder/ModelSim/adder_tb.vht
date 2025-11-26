@@ -56,7 +56,7 @@ BEGIN
    PLAYER_SELECT <= '1'; HOUSE_SELECT <= '0';
    FOR I IN 0 TO 21 LOOP -- Loop through all possible values of running sum
       PLAYER_INPUT <= STD_LOGIC_VECTOR(to_unsigned(I, PLAYER_INPUT'length));
-      FOR J IN 0 TO 11 LOOP -- Loop through all possible card values
+      FOR J IN 0 TO 13 LOOP -- Loop through all possible card values
          CARD <= STD_LOGIC_VECTOR(to_unsigned(J, CARD'length));
          RESET <= '0';
          WAIT FOR 5 ns;
@@ -69,7 +69,7 @@ BEGIN
    HOUSE_SELECT <= '1'; PLAYER_SELECT <= '0';
    FOR I IN 0 TO 21 LOOP -- Loop through all possible values of running sum
       HOUSE_INPUT <= STD_LOGIC_VECTOR(to_unsigned(I, HOUSE_INPUT'length));
-      FOR J IN 0 TO 11 LOOP -- Loop through all possible card values
+      FOR J IN 0 TO 13 LOOP -- Loop through all possible card values
          CARD <= STD_LOGIC_VECTOR(to_unsigned(J, CARD'length));
          RESET <= '0';
          WAIT FOR 5 ns;

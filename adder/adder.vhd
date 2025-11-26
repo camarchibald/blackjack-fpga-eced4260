@@ -32,6 +32,9 @@ ARCHITECTURE Behaviour OF adder IS
 	-- Adder signals, sum output is sufficiently large since the sum should never exceed the bits of the inputs
 	SIGNAL IN1_ARR, IN2_ARR, CIN_ARR, COUT_ARR, SUM_ARR: STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0);
 
+	-- Intermediate card value, JQK in CARD gets 10 in CARD_INT (not 11, 12, 13), A in CARD gets 11 in CARD_INT (not 1)
+	SIGNAL CARD_INT: STD_LOGIC_VECTOR(CARD_MAX_BIT DOWNTO 0);
+
 BEGIN
 	-- Create full adders and connect to signal arrays
 	FULL_ADDERS:
@@ -47,8 +50,15 @@ BEGIN
 	-- No carry in
 	CIN_ARR(0) <= '0';
 
+	-- Intermediate card value, JQK in CARD gets 10 in CARD_INT (not 11, 12, 13), A in CARD gets 11 in CARD_INT (not 1)
+	CARD_INT <= STD_LOGIC_VECTOR(TO_UNSIGNED(11, CARD_INT'length)) WHEN (CARD = STD_LOGIC_VECTOR(TO_UNSIGNED(1, CARD_INT'length))) ELSE
+					STD_LOGIC_VECTOR(TO_UNSIGNED(10, CARD_INT'length)) WHEN (CARD = STD_LOGIC_VECTOR(TO_UNSIGNED(11, CARD_INT'length)) OR
+																								CARD = STD_LOGIC_VECTOR(TO_UNSIGNED(12, CARD_INT'length)) OR
+																								CARD = STD_LOGIC_VECTOR(TO_UNSIGNED(13, CARD_INT'length))) ELSE
+					CARD;	
+
 	-- Card is input 1, fill the rest of the unused bits as zero (cards only go up to 11d which is 4 bits)
-	IN1_ARR(CARD_MAX_BIT DOWNTO 0) <= CARD;
+	IN1_ARR(CARD_MAX_BIT DOWNTO 0) <= CARD_INT;
 	IN1_ARR(SUM_MAX_BIT DOWNTO (CARD_MAX_BIT + 1)) <= (OTHERS => '0');
 
 	-- Running sum is input 2
