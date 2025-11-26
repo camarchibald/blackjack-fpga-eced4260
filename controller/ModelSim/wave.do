@@ -66,6 +66,7 @@ add wave -noupdate -label HAND_DISPLAY_2 /controller_shuffle_TB/U1/hand_display_
 add wave -noupdate -label HAND_DISPLAY_3 /controller_shuffle_TB/U1/hand_display_3
 add wave -noupdate -label HAND_DISPLAY_4 /controller_shuffle_TB/U1/hand_display_4
 add wave -noupdate -label HAND_DISPLAY_5 /controller_shuffle_TB/U1/hand_display_5
+add wave -noupdate -label HANDS /controller_shuffle_TB/U1/hands
 
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {50000000 ps} 0}

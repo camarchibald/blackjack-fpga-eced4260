@@ -23,7 +23,8 @@ module controller (
     output [6:0] hand_display_2,
     output [6:0] hand_display_3,
     output [6:0] hand_display_4,
-    output [6:0] hand_display_5
+    output [6:0] hand_display_5,
+    output [39:0] hands             // Output of hands for exhaustive testbench 
 );
     // State parameters
     parameter S_RESET	            = 5'b00000; // 0
@@ -84,6 +85,18 @@ module controller (
     // Player and house hands
     reg [3:0] player_hand [4:0];    // Array of 5 4-bit cards 
     reg [3:0] house_hand [4:0];     // Array of 5 4-bit cards
+    
+    assign hands[3:0]   = player_hand[0];
+    assign hands[7:4]   = player_hand[1];
+    assign hands[11:8]  = player_hand[2];
+    assign hands[15:12] = player_hand[3];
+    assign hands[19:16] = player_hand[4];
+
+    assign hands[23:20]  = house_hand[0];
+    assign hands[27:24]  = house_hand[1];
+    assign hands[31:28]  = house_hand[2];
+    assign hands[35:32]  = house_hand[3];
+    assign hands[39:36]  = house_hand[4];
 
     reg [2:0] player_hand_index = 3'b000, house_hand_index = 3'b000;
 
@@ -536,9 +549,9 @@ module bcd(
             4'b1000: segment_output = 7'b0000000; // 8
             4'b1001: segment_output = 7'b0011000; // 9
             4'b1010: segment_output = 7'b1000000; // 10
-            4'b1011: segment_output = 7'b1000000; // J
-            4'b1100: segment_output = 7'b1000000; // Q
-            4'b1101: segment_output = 7'b1000000; // K
+            4'b1011: segment_output = 7'b1110010; // J //Formerly 7'b1000000
+            4'b1100: segment_output = 7'b0000100; // Q //Formerly 7'b1000000
+            4'b1101: segment_output = 7'b0001001; // K //Formerly 7'b1000000
             4'b1110: segment_output = 7'b0001001; // H[ouse win]
             4'b1111: segment_output = 7'b0001100; // P[layer win]
             default: segment_output = 7'b1111111; // invalid
