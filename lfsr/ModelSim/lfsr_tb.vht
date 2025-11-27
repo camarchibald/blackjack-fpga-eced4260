@@ -2,7 +2,7 @@
 -- Author: Cameron Archibald
 -- Student ID: B00893056
 -- Date: 2025-10-30
--- File Name: lfsr_circular_counter_tb.vht
+-- File Name: lfsr_tb.vht
 -- Architecture: 
 -- Description: Load value and observe the output of the lfsr/circular counter in one of two modes
 -- Acknowledgements: 
@@ -15,7 +15,7 @@ ENTITY testbench IS
 END testbench;
 
 ARCHITECTURE Behaviour OF testbench IS
-   COMPONENT lfsr_circular_counter
+   COMPONENT lfsr
    GENERIC (HIGH_BIT: INTEGER := 5); -- Highest bit in register
 	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock
             RESET: IN STD_LOGIC; -- Asynchronous reset
@@ -43,7 +43,7 @@ ARCHITECTURE Behaviour OF testbench IS
    SIGNAL COUNT: INTEGER:= 0;
 
 BEGIN
-   inst: lfsr_circular_counter PORT MAP (CLK, RESET, SET_START, SET_READY, SET_VAL, SHIFT_START, SHIFT_READY, OUTPUT);
+   inst: lfsr PORT MAP (CLK, RESET, SET_START, SET_READY, SET_VAL, SHIFT_START, SHIFT_READY, OUTPUT);
 
    -- Run clock continuously
    PROCESS

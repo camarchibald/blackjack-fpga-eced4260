@@ -12,7 +12,7 @@ vlib deck
 vcom ../../deck/*.vhd
 vcom ../../comparator/*.vhd
 vcom ../../adder/*.vhd
-vcom ../../lfsr_circular_counter/*.vhd
+vcom ../../lfsr/*.vhd
 
 # Compile all your Verilog design and testbench files
 vlog ../*.v

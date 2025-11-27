@@ -2,7 +2,7 @@
 -- Author: Cameron Archibald
 -- Student ID: B00893056
 -- Date: 2025-11-11
--- File Name: lfsr_circular_counter.vhd
+-- File Name: lfsr.vhd
 -- Architecture: 
 -- Description: Pseudo random number generator of 6 bits, using lfsr. 
 -- Acknowledgements: https://docs.amd.com/v/u/en-US/xapp052, shows table of tap locations for various bits
@@ -11,7 +11,7 @@ LIBRARY IEEE;
 USE IEEE.std_logic_1164.ALL;
 USE IEEE.numeric_std.all;  
 
-ENTITY lfsr_circular_counter IS
+ENTITY lfsr IS
 	GENERIC (HIGH_BIT: INTEGER := 5); -- Highest bit in register
 	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock
 				RESET: IN STD_LOGIC; -- Asynchronous reset
@@ -23,7 +23,7 @@ ENTITY lfsr_circular_counter IS
 				OUTPUT: BUFFER STD_LOGIC_VECTOR(HIGH_BIT DOWNTO 0)); -- Value of generator
 END ENTITY;
 
-ARCHITECTURE Behaviour OF lfsr_circular_counter IS
+ARCHITECTURE Behaviour OF lfsr IS
 	TYPE STATE_T IS (S_SET_START, S_SETTING, S_SHIFT_SET_START, S_SHIFTING_RANDOM, S_SHIFTING_CHECK, S_SHIFTING_DONE);
 	SIGNAL STATE: STATE_T := S_SET_START; -- State starts at S_SET_START (need to load starting value)
 

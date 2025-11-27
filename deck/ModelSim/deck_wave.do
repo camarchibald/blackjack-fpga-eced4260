@@ -12,7 +12,7 @@ add wave -noupdate -label CARD_OVERFLOW /testbench/CARD_OVERFLOW
 add wave -noupdate -divider STATES
 add wave -noupdate -label TB_STATE -format literal /testbench/STATE
 add wave -noupdate -label DECK_STATE -format literal /testbench/deck_inst/STATE
-add wave -noupdate -label LFSR_STATE -format literal /testbench/deck_inst/lfsr/STATE
+add wave -noupdate -label LFSR_STATE -format literal /testbench/deck_inst/lfsr_inst/STATE
 
 add wave -noupdate -divider DECK_TB_HANDSHAKES
 add wave -noupdate -label SHUFFLE_START /testbench/SHUFFLE_START
@@ -28,7 +28,7 @@ add wave -noupdate -label LFSR_SHIFT_READY /testbench/deck_inst/LFSR_SHIFT_READY
 
 add wave -noupdate -divider INTERNAL_STATES
 add wave -noupdate -label DECK -radix unsigned /testbench/deck_inst/SHUFFLED_CARDS
-add wave -noupdate -label LFSR -radix unsigned /testbench/deck_inst/lfsr/OUTPUT
+add wave -noupdate -label LFSR -radix unsigned /testbench/deck_inst/lfsr_inst/OUTPUT
 
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ns} 0}

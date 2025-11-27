@@ -55,7 +55,7 @@ add wave -noupdate -label LFSR_SHIFT_READY  /controller_shuffle_TB/U1/deck_insta
 
 add wave -noupdate -divider DECK_INTERNAL_STATES
 add wave -noupdate -label DECK -radix unsigned /controller_shuffle_TB/U1/deck_instance/SHUFFLED_CARDS
-add wave -noupdate -label LFSR -radix unsigned /controller_shuffle_TB/U1/deck_instance/lfsr/OUTPUT
+add wave -noupdate -label LFSR -radix unsigned /controller_shuffle_TB/U1/deck_instance/lfsr_inst/OUTPUT
 
 add wave -noupdate -divider HAND_DISPLAY
 add wave -noupdate -label HAND_SELECT /controller_shuffle_TB/U1/hand_select

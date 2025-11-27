@@ -1,4 +1,4 @@
-# lfsr_circular_counter testbench wave.do file, Cameron Archibald B00893056
+# lfsr testbench wave.do file, Cameron Archibald B00893056
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -label CLK /testbench/CLK

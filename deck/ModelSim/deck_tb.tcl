@@ -10,7 +10,7 @@ vcom ../*.vhd
 # compile the VHDL code of the testbench
 vcom *.vht
 # compile VHDL code of component lfsr_circular_counter
-vcom ../../lfsr_circular_counter/*.vhd
+vcom ../../lfsr/*.vhd
 # start the Simulator, including some libraries that may be needed
 vsim work.testbench -Lf 220model -Lf altera_mf
 # show waveforms specified in wave.do
