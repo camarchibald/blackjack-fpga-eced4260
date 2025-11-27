@@ -1,3 +1,4 @@
+# Controller testbench tcl file, Cameron Archibald B00893056, Nader Hdeib B00898627
 # stop any simulation that is currently running
 quit -sim
 
@@ -19,10 +20,10 @@ vlog ../*.v
 vlog *.v
 
 # Launch simulation with proper library references
-vsim work.controller_shuffle_TB
+vsim work.controller_tb
 
 # Load waveform setup if needed
-do wave.do
+do controller_wave.do
 
 # Run the simulation
 run 5000 ns

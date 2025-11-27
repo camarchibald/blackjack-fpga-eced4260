@@ -2,13 +2,13 @@
 Author: Nader Hdeib
 Student ID: B00898627
 Date: November 22, 2025
-File Name: controller_shuffle_TB.v
+File Name: controller_tb.v
 Description: This file attempts to excercise a blackjack shuffle sequence.
 */
 
 `timescale 1ns / 1ps
 
-module controller_shuffle_TB ();
+module controller_tb ();
 
     reg clk = 0;
     reg rst = 1;
