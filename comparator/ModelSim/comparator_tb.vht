@@ -1,10 +1,11 @@
 ---------------------------------------------------
--- Author: Cameron Archibald
--- Student ID: B00893056
+-- Author: Cameron Archibald, Nader Hdeib
+-- Student ID: B00893056, B00898627
 -- Date: 2025-11-16
 -- File Name: comparator_tb.vht
 -- Architecture: 
--- Description: Test the comparator functionality
+-- Description: Test the comparator functionality with intended inputs:
+--    [(Ch1 : Ch2)]: (Player hand : house hand), (player hand : 21), (house hand : 21), (house hand : 17)
 -- Acknowledgements: 
 -------------------------------------------------
 LIBRARY IEEE;                                               
@@ -22,14 +23,14 @@ ARCHITECTURE Behaviour OF testbench IS
 			EQ, GT, LT: OUT STD_LOGIC); -- Equal, greater than, less than
    END COMPONENT;
 
-   CONSTANT SUM_MAX_BIT: INTEGER := 5;
-
    -- Testbench signals
+   CONSTANT SUM_MAX_BIT: INTEGER := 5;
 	SIGNAL PLAYER_INPUT, HOUSE_INPUT: STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0); 
 	SIGNAL VAL1_PLAYER, VAL1_HOUSE, VAL2_PLAYER, VAL2_HOUSE, VAL2_21, VAL2_17: STD_LOGIC;
    SIGNAL EQ, GT, LT: STD_LOGIC; 
 
 BEGIN
+   -- Create comparator
    comparator_inst: comparator GENERIC MAP (SUM_MAX_BIT) PORT MAP (PLAYER_INPUT, HOUSE_INPUT, VAL1_PLAYER, VAL1_HOUSE, VAL2_PLAYER, VAL2_HOUSE, VAL2_21, VAL2_17, EQ, GT, LT);
 
    PROCESS
@@ -57,7 +58,7 @@ BEGIN
 
    -- Player compared against bust
    VAL1_PLAYER <= '1'; VAL1_HOUSE <= '0'; VAL2_PLAYER <= '0'; VAL2_HOUSE <= '0'; VAL2_21 <= '1'; VAL2_17 <= '0';
-   FOR I IN 1 TO 32 LOOP -- 32 is highest that can be achieved with 21 + hit (11)
+   FOR I IN 1 TO 33 LOOP -- 32 is highest that can be achieved with 22 + hit (11)
       PLAYER_INPUT <= STD_LOGIC_VECTOR(to_unsigned(I, PLAYER_INPUT'length));
       WAIT FOR 5 ns;
    END LOOP;

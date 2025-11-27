@@ -1,11 +1,11 @@
 ---------------------------------------------------
--- Author: Cameron Archibald
--- Student ID: B00893056
+-- Author: Cameron Archibald, Nader Hdeib
+-- Student ID: B00893056, B00898627
 -- Date: 2025-11-16
 -- File Name: comparator.vhd
--- Architecture: 
--- Description: 6 bit comparator, four possible channels of comparison
--- Tested (intended) comparisons (VAl1 vs VAL2): Player vs house, player vs bj, house vs bj, house vs 17
+-- Architecture: Dataflow, structural
+-- Description: 6 bit comparator, chaining six single bit adders
+--		Inputs are multiplexed to choose between different input signals
 -- Acknowledgements: https://en.wikipedia.org/wiki/Digital_comparator, comparator equations
 -------------------------------------------------
 LIBRARY IEEE;
@@ -22,7 +22,7 @@ END ENTITY;
 
 ARCHITECTURE Behaviour OF comparator IS
 	COMPONENT single_comparator
-	PORT (A, B: IN STD_LOGIC;
+	PORT (A, B: IN STD_LOGIC; -- Comparator inputs
 			EQ, GT, LT: OUT STD_LOGIC); -- Equal, A greater than B, A less than B		
 	END COMPONENT;
 
@@ -72,7 +72,7 @@ USE IEEE.numeric_std.all;
 
 -- Single bit comparator
 ENTITY single_comparator IS
-	PORT (A, B: IN STD_LOGIC;
+	PORT (A, B: IN STD_LOGIC; -- Comparator inputs
 			EQ, GT, LT: OUT STD_LOGIC); -- Equal, A greater than B, A less than B		
 END ENTITY;
 
