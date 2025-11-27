@@ -1,4 +1,4 @@
-# Adder testbench tcl file, Cameron Archibald B00893056
+# Adder testbench tcl file, Cameron Archibald B00893056, Nader Hdeib B00898627
 # stop any simulation that is currently running
 quit -sim
 

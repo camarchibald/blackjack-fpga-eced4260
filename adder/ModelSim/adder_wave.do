@@ -1,4 +1,4 @@
-# Adder testbench wave.do file, Cameron Archibald B00893056
+# Adder testbench wave.do file, Cameron Archibald B00893056, Nader Hdeib B00898627
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 

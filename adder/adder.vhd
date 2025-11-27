@@ -1,10 +1,10 @@
 ---------------------------------------------------
--- Author: Cameron Archibald
--- Student ID: B00893056
+-- Author: Cameron Archibald, Nader Hdeib
+-- Student ID: B00893056, B00898627
 -- Date: 2025-11-16
 -- File Name: adder.vhd
--- Architecture: 
--- Description: 6 bit adder, add a card value to a running sum chosen from two channels
+-- Architecture: Dataflow, structural
+-- Description: 6 bit adder, uses 6 chained full adders, add a card value to a running sum chosen from two channels
 -- Acknowledgements: https://www.geeksforgeeks.org/digital-logic/full-adder-in-digital-logic/, full adder
 -- 	https://www.geeksforgeeks.org/digital-logic/half-adder-in-digital-logic/, half adder
 -------------------------------------------------
@@ -17,7 +17,7 @@ ENTITY adder IS
 	GENERIC (SUM_MAX_BIT: INTEGER := 5; -- Max bit of the adder and sum
 				CARD_MAX_BIT: INTEGER := 3); -- Max bit of the card
 	PORT (CARD: IN STD_LOGIC_VECTOR(CARD_MAX_BIT DOWNTO 0); -- Card input to adder
-			RESET: IN STD_LOGIC; -- Asynchronous reset
+			RESET: IN STD_LOGIC; -- Asynchronous reset, outputs zero if high
 			PLAYER_INPUT, HOUSE_INPUT: IN STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0); -- Running sum inputs to adder
 			PLAYER_OUTPUT, HOUSE_OUTPUT: OUT STD_LOGIC_VECTOR(SUM_MAX_BIT DOWNTO 0); -- Running sum outputs from adder
 			PLAYER_SELECT, HOUSE_SELECT: IN STD_LOGIC); -- Control signals, 1 outputs the adder output, 0 outputs 0					
