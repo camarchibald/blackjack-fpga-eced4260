@@ -431,8 +431,12 @@ module controller (
                         else begin
                             // Set game state to done
                             game_state <= PLAY_DONE;
-                            // Next state is win comparison
-                            state <= S_CP_WINNER;
+                            // Set comparator parameter 1
+                            val1_player = 1;
+                            // Set comparator parameter 2
+                            val2_house = 1;
+                            // Compare output in next state
+                            state <= S_WINNER_OUTPUT;
                         end
                     end
 
@@ -477,16 +481,6 @@ module controller (
                             // Next state is player win
                             state <= S_PLAYER_WIN;
                         end
-                    end
-
-                S_CP_WINNER:
-                    begin
-                        // Set comparator parameter 1
-                        val1_player = 1;
-                        // Set comparator parameter 2
-                        val2_house = 1;
-                        // Compare output in next state
-                        state <= S_WINNER_OUTPUT;
                     end
                 
                 S_WINNER_OUTPUT:
