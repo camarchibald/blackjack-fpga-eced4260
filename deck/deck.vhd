@@ -1,10 +1,10 @@
 ---------------------------------------------------
--- Author: Cameron Archibald
--- Student ID: B00893056
+-- Author: Cameron Archibald, Nader Hdeib
+-- Student ID: B00893056, B00898627
 -- Date: 2025-11-11
 -- File Name: deck.vhd
--- Architecture: 
--- Description: 
+-- Architecture: Behavioural, Structural
+-- Description: Implements a deck that shuffles cards and dispenses one card at a time
 -- Acknowledgements: 
 -------------------------------------------------
 LIBRARY IEEE;
@@ -12,8 +12,8 @@ USE IEEE.std_logic_1164.ALL;
 USE IEEE.numeric_std.all;  
 
 ENTITY deck IS
-	GENERIC (LFSR_MAX_BIT: INTEGER := 5;
-				CARD_MAX_BIT: INTEGER := 3);
+	GENERIC (LFSR_MAX_BIT: INTEGER := 5; -- Highest bit in lfsr
+				CARD_MAX_BIT: INTEGER := 3); -- Highest bit of card
 	PORT 	  (CLK: IN STD_LOGIC; -- Rising edge clock
 				RESET: IN STD_LOGIC; -- Asynchronous reset						
 				SHUFFLE_START: IN STD_LOGIC; -- Initiate shuffling					
@@ -121,7 +121,8 @@ BEGIN
 
 	PROCESS (CLK, RESET)
 	BEGIN
-		IF (RESET = '1') THEN -- Reset signals and shuffled cards to zero
+	-- Reset signals and shuffled cards to zero
+		IF (RESET = '1') THEN 
 			STATE <= S_RESET;
 			SHUFFLE_READY <= '1';
 			CARD_READY <= '1';
@@ -130,43 +131,53 @@ BEGIN
 																		  -- for clarity in analysis, reset all to zero
 
 		ELSIF (rising_edge(CLK)) THEN
-			IF (STATE = S_RESET AND SHUFFLE_START = '1') THEN -- On shuffle start signal, shuffle ready goes low, initiate setting of lfsr with seed
+		-- On shuffle start signal, shuffle ready goes low, initiate setting of lfsr with seed
+			IF (STATE = S_RESET AND SHUFFLE_START = '1') THEN 
 				STATE <= S_SHUFFLE_START;
 				SHUFFLE_READY <= '0';
 				LFSR_SET_START <= '1';
 
-			ELSIF (STATE = S_SHUFFLE_START AND LFSR_SET_READY = '0') THEN -- Intermediate lfsr setting stage
+		-- Intermediate lfsr setting stage
+			ELSIF (STATE = S_SHUFFLE_START AND LFSR_SET_READY = '0') THEN 
 				STATE <= S_LFSR_SETTING;	
 				LFSR_SET_START <= '0';
-			
-			ELSIF (STATE = S_LFSR_SETTING AND LFSR_SET_READY = '1') THEN -- lfsr done setting, perform first shift to ensure starting position is within 0-51 if the seed was above 51
+
+		-- lfsr done setting, perform first shift to ensure starting position is within 0-51 if the seed was above 51
+			ELSIF (STATE = S_LFSR_SETTING AND LFSR_SET_READY = '1') THEN 
 				STATE <= S_LFSR_SHIFT_START;
 				LFSR_SHIFT_START <= '1';
-			
-			ELSIF (STATE = S_LFSR_SET) THEN -- Load the card into the shuffled deck, increment count of cards added
+
+		-- Load the card into the shuffled deck, increment count of cards added
+			ELSIF (STATE = S_LFSR_SET) THEN 
 				STATE <= S_SHUFFLED_CHECK;
 				SHUFFLED_CARDS(SHUFFLED_INDEX) <= UNSHUFFLED_CARDS(to_integer(UNSIGNED(LFSR_OUTPUT)));
 				SHUFFLED_INDEX <= SHUFFLED_INDEX + 1;
-			
-			ELSIF (STATE = S_SHUFFLED_CHECK) THEN -- If all cards added, shuffle complete
-				IF (SHUFFLED_INDEX <= MAX_CARD) THEN -- Not all cards added, get new card
+
+		-- If all cards added, shuffle complete
+			ELSIF (STATE = S_SHUFFLED_CHECK) THEN 
+			-- Not all cards added, get new card
+				IF (SHUFFLED_INDEX <= MAX_CARD) THEN 
 					STATE <= S_LFSR_SHIFT_START;
 					LFSR_SHIFT_START <= '1';
 
-				ELSIF (SHUFFLE_START = '0') THEN -- All cards added and start signal zero
+			-- All cards added and start signal zero
+				ELSIF (SHUFFLE_START = '0') THEN 
 					STATE <= S_SHUFFLED;
 					SHUFFLE_READY <= '1';
 					SHUFFLED_INDEX <= 0; -- Use shuffled index to pull out the cards from the shuffled deck
 				END IF;
 			
-			ELSIF (STATE = S_LFSR_SHIFT_START AND LFSR_SHIFT_READY = '0') THEN -- Intermediate lfsr shifting stage
+		-- Intermediate lfsr shifting stage
+			ELSIF (STATE = S_LFSR_SHIFT_START AND LFSR_SHIFT_READY = '0') THEN 
 				STATE <= S_LFSR_SHIFTING;
 				LFSR_SHIFT_START <= '0';
 			
-			ELSIF (STATE = S_LFSR_SHIFTING AND LFSR_SHIFT_READY = '1') THEN -- lfsr done shifting, add the new one to deck
+		-- lfsr done shifting, add the new one to deck
+			ELSIF (STATE = S_LFSR_SHIFTING AND LFSR_SHIFT_READY = '1') THEN 
 				STATE <= S_LFSR_SET;
 
-			ELSIF (STATE = S_SHUFFLED AND CARD_START = '1') THEN -- Requested to get a new card, unless too many cards requested
+		-- Requested to get a new card, unless too many cards requested
+			ELSIF (STATE = S_SHUFFLED AND CARD_START = '1') THEN 
 				IF (SHUFFLED_INDEX <= MAX_CARD) THEN
 					STATE <= S_CARD_GETTING;
 					CARD_READY <= '0';
@@ -175,8 +186,9 @@ BEGIN
 				ELSE
 					CARD_OVERFLOW <= '1'; -- Indicate overflow, deck is stuck in this state
 				END IF;
-
-			ELSIF (STATE = S_CARD_GETTING AND CARD_START = '0') THEN -- Card ready
+				
+		-- Card ready
+			ELSIF (STATE = S_CARD_GETTING AND CARD_START = '0') THEN 
 				STATE <= S_SHUFFLED;
 				CARD_READY <= '1';
 

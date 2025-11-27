@@ -1,4 +1,4 @@
-# Deck testbench tcl file, Cameron Archibald B00893056
+# Deck testbench tcl file, Cameron Archibald B00893056, Nader Hdeib B00898627
 # stop any simulation that is currently running
 quit -sim
 
@@ -16,4 +16,4 @@ vsim work.testbench -Lf 220model -Lf altera_mf
 # show waveforms specified in wave.do
 do deck_wave.do
 # advance the simulation the desired amount of time
-run 10000 ns
+run 16000 ns
