@@ -28,6 +28,7 @@ ARCHITECTURE Behaviour OF lfsr_circular_counter IS
 	SIGNAL STATE: STATE_T := S_SET_START; -- State starts at S_SET_START (need to load starting value)
 
 	CONSTANT MAX: UNSIGNED(HIGH_BIT DOWNTO 0) := to_unsigned(51, HIGH_BIT + 1); -- Maximum value
+	CONSTANT INVALID_SEED: UNSIGNED(HIGH_BIT DOWNTO 0) := to_unsigned(63, HIGH_BIT + 1); -- If seed is 63 then it will not shift
 
 BEGIN
 	PROCESS (CLK, RESET)
@@ -59,8 +60,11 @@ BEGIN
 				OUTPUT(4) <= OUTPUT(3);
 				OUTPUT(5) <= OUTPUT(4);
 				
-			ELSIF (STATE = S_SHIFTING_CHECK) THEN -- Check if over 51, need to do the random shift again
-				IF (UNSIGNED(OUTPUT) > MAX) THEN 
+			ELSIF (STATE = S_SHIFTING_CHECK) THEN -- Check if over 51, need to do the random shift again, if equal to 63 (invalid seed) then flip one bit to zero and shift once
+				IF (UNSIGNED(OUTPUT) = INVALID_SEED) THEN
+					STATE <= S_SHIFTING_RANDOM;
+					OUTPUT(0) <= '0';
+				ELSIF (UNSIGNED(OUTPUT) > MAX) THEN 
 					STATE <= S_SHIFTING_RANDOM;
 				ELSE
 					STATE <= S_SHIFTING_DONE;

@@ -19,7 +19,10 @@ add wave -noupdate -divider INFO
 add wave -noupdate -label PLAYER_HAND -radix unsigned /controller_exhaustive_tb/player_hand
 add wave -noupdate -label HOUSE_HAND -radix unsigned /controller_exhaustive_tb/house_hand
 add wave -noupdate -label STATE -radix unsigned /controller_exhaustive_tb/state
-
+add wave -noupdate -label PLAYER_SUM -radix unsigned /controller_exhaustive_tb/player_sum_tb
+add wave -noupdate -label HOUSE_SUM -radix unsigned /controller_exhaustive_tb/house_sum_tb
+add wave -noupdate -label CORRECT -radix unsigned /controller_exhaustive_tb/correct
+add wave -noupdate -label INCORRECT -radix unsigned /controller_exhaustive_tb/incorrect
 
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {50000000 ps} 0}

@@ -71,12 +71,23 @@ module controller_exhaustive_tb ();
         house_hand[4]  = hands[39:36] ;   
     end
 
-    integer i, j, k;
+    integer i, j, k, m;
+
+    //Sums of the player, house hands
+    reg [5:0] player_sum_tb, house_sum_tb;
+
+    //Count of correct or incorrect outcomes, incorrect should be zero at the end of the simulation
+    reg [9:0] correct = 10'd0;
+    reg [9:0] incorrect = 10'd0;
     
     initial begin
         seed <= 5'd0;
-        for (i = 0; i < 64; i = 1 + 1) begin
+        
+        for (i = 0; i < 64; i = i + 1) begin
+
             for (j = 0; j <= 3; j = j + 1) begin
+                player_sum_tb <= 6'd0;
+                house_sum_tb <= 6'd0;
 
                 #20;
                 rst <= 0;
@@ -104,14 +115,76 @@ module controller_exhaustive_tb ();
                 stand <= 0;
                 #20;
                 stand <= 1;
-                
+
                 #20;
+
+                //Add the sums for each hand
+                for (m = 0; m <= 4; m = m + 1) begin
+                    case (player_hand[m])
+                        //A
+                        6'd1: begin
+                            player_sum_tb <= player_sum_tb + 6'd11;
+                        end
+                        //JQK
+                        6'd11, 6'd12, 6'd13: begin
+                            player_sum_tb <= player_sum_tb + 6'd10;
+                        end
+                        //Other cards have their value
+                        default: begin
+                            player_sum_tb <= player_sum_tb + player_hand[m];
+                        end
+                    endcase
+
+                    case (house_hand[m])
+                        //A
+                        6'd1: begin
+                            house_sum_tb <= house_sum_tb + 6'd11;
+                        end
+                        //JQK
+                        6'd11, 6'd12, 6'd13: begin
+                            house_sum_tb <= house_sum_tb + 6'd10;
+                        end
+                        //Other cards have their value
+                        default: begin
+                            house_sum_tb <= house_sum_tb + house_hand[m];
+                        end
+                    endcase
+                    #1;
+                end
+
+                case (game_outcome)
+                    2'd1: begin //Player win, player doesn't bust and (player exceeds house or house busts)
+                        if (((player_sum_tb > house_sum_tb) || (house_sum_tb > 10'd21)) && (player_sum_tb <= 10'd21)) begin
+                            correct <= correct + 10'd1;
+                        end else begin
+                            incorrect <= incorrect + 10'd1;
+                        end
+                    end
+
+                    2'd2: begin //House win, player busts or (house exceeds player given the house hasn't busted)
+                        if (((house_sum_tb > player_sum_tb) && (house_sum_tb <= 10'd21)) || (player_sum_tb > 10'd21)) begin
+                            correct <= correct + 10'd1;
+                        end else begin
+                            incorrect <= incorrect + 10'd1;
+                        end
+                    end
+
+                    2'd3: begin //Push
+                        if (player_sum_tb == house_sum_tb) begin
+                            correct <= correct + 10'd1;
+                        end else begin
+                            incorrect <= incorrect + 10'd1;
+                        end
+                    end
+
+                endcase
+
                 // Validate results
             end
 
             //Next seed
             seed <= seed + 5'd1;
-        end                                  
+        end        
     end
 	
 	
