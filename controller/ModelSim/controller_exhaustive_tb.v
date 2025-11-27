@@ -116,7 +116,7 @@ module controller_exhaustive_tb ();
                 #20;
                 stand <= 1;
 
-                #20;
+                #100;
 
                 //Add the sums for each hand
                 for (m = 0; m <= 4; m = m + 1) begin

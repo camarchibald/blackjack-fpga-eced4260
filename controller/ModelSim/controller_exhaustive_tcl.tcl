@@ -25,4 +25,4 @@ vsim work.controller_exhaustive_tb
 do controller_exhaustive_wave.do
 
 # Run the simulation
-run 240000 ns
+run 300000 ns
