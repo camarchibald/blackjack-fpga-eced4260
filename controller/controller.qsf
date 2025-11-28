@@ -60,11 +60,11 @@ set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_location_assignment PIN_K14 -to clk -comment 25_MHz_clock_input
-set_location_assignment PIN_W19 -to state_out[0] -comment LED5
-set_location_assignment PIN_Y19 -to state_out[1] -comment LED6
-set_location_assignment PIN_W20 -to state_out[2] -comment LED7
-set_location_assignment PIN_W21 -to state_out[3] -comment LED8
-set_location_assignment PIN_Y21 -to state_out[4] -comment LED9
+#set_location_assignment PIN_W19 -to state_out[0] -comment LED5
+#set_location_assignment PIN_Y19 -to state_out[1] -comment LED6
+#set_location_assignment PIN_W20 -to state_out[2] -comment LED7
+#set_location_assignment PIN_W21 -to state_out[3] -comment LED8
+#set_location_assignment PIN_Y21 -to state_out[4] -comment LED9
 set_location_assignment PIN_AA14 -to rst -comment KEY0
 set_location_assignment PIN_AA15 -to user_ready_to_begin -comment KEY1
 set_location_assignment PIN_W15 -to hit -comment KEY2
@@ -76,9 +76,10 @@ set_location_assignment PIN_AD10 -to seed[4] -comment SW8
 set_location_assignment PIN_AE12 -to seed[5] -comment SW9
 set_location_assignment PIN_AD11 -to seed[0] -comment SW4
 set_location_assignment PIN_AB12 -to hand_select -comment SW0
+set_location_assignment PIN_V16 -to game_outcome[0] -comment LED0
 set_location_assignment PIN_W16 -to game_outcome[1] -comment LED1
-set_location_assignment PIN_V18 -to game_state_out[0] -comment LED3
-set_location_assignment PIN_W17 -to game_state_out[1] -comment LED4
+#set_location_assignment PIN_V18 -to game_state_out[0] -comment LED3
+#set_location_assignment PIN_W17 -to game_state_out[1] -comment LED4
 
 set_location_assignment PIN_AE26 -to hand_display_0[0] -comment 7SEG0_0
 set_location_assignment PIN_AE27 -to hand_display_0[1] -comment 7SEG0_1
@@ -128,7 +129,7 @@ set_location_assignment PIN_AB26 -to hand_display_5[4] -comment 7SEG5_4
 set_location_assignment PIN_AA26 -to hand_display_5[5] -comment 7SEG5_5
 set_location_assignment PIN_AA25 -to hand_display_5[6] -comment 7SEG5_6
 
-set_location_assignment PIN_V16 -to game_outcome[0] -comment LED0
+
 set_global_assignment -name VHDL_FILE ../lfsr/lfsr.vhd
 set_global_assignment -name VHDL_FILE ../deck/deck.vhd
 set_global_assignment -name VHDL_FILE ../comparator/comparator.vhd
