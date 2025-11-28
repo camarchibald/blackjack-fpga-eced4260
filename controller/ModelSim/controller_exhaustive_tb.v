@@ -1,9 +1,9 @@
 /*
-Author: Cameron Archibald
-Student ID: B00893056
+Author: Cameron Archibald, Nader Hdeib
+Student ID: B00893056, B00898627
 Date: November 26, 2025
 File Name: controller_exhaustive_tb.v
-Description: 
+Description: The testbench tests every possible game of blackjack (all 0-63 seeds, 0-2 hits by the player)
 */
 
 `timescale 1ns / 1ps
@@ -31,6 +31,14 @@ module controller_exhaustive_tb ();
     reg [3:0] player_hand [4:0];
     reg [3:0] house_hand [4:0];
     wire [4:0] state;
+    reg [5:0] player_sum_tb, house_sum_tb; //Sums of the player, house hands as calculated by the testbench
+
+    //Count of correct or incorrect outcomes, incorrect should be zero at the end of the simulation
+    reg [9:0] correct = 10'd0;
+    reg [9:0] incorrect = 10'd0;
+
+    // Looping counters
+    integer i, j, k, m;
 
     // Instantiate controller
     controller U1 (
@@ -56,7 +64,7 @@ module controller_exhaustive_tb ();
     // Main clock
     always #1 clk = ~clk;
 
-    // Assign to the mega hand signal
+    // Assign to the from the combined hand signal
     always @* begin
         player_hand[0] = hands[3:0]   ;
         player_hand[1] = hands[7:4]   ;
@@ -71,24 +79,18 @@ module controller_exhaustive_tb ();
         house_hand[4]  = hands[39:36] ;   
     end
 
-    integer i, j, k, m;
-
-    //Sums of the player, house hands
-    reg [5:0] player_sum_tb, house_sum_tb;
-
-    //Count of correct or incorrect outcomes, incorrect should be zero at the end of the simulation
-    reg [9:0] correct = 10'd0;
-    reg [9:0] incorrect = 10'd0;
-    
     initial begin
         seed <= 5'd0;
         
+        // Loop through all 0-63 seeds
         for (i = 0; i < 64; i = i + 1) begin
 
+            // Loop through 0-3 hits
             for (j = 0; j <= 3; j = j + 1) begin
                 player_sum_tb <= 6'd0;
                 house_sum_tb <= 6'd0;
-
+                
+                // Apply reset
                 #20;
                 rst <= 0;
                 #20; 
@@ -96,13 +98,14 @@ module controller_exhaustive_tb ();
                 
                 #700;
                 
+                // Press start button
                 user_ready_to_begin <= 0;
                 #20;     
                 user_ready_to_begin <= 1;     
                 
                 #50;
 
-                
+                // Execute the 0-3 hits
                 for (k = 0; k < j; k = k + 1) begin
                     hit <= 0;
                     #20;
@@ -110,7 +113,7 @@ module controller_exhaustive_tb ();
                     #20;
                 end
                 
-                
+                // Press stand button
                 #20
                 stand <= 0;
                 #20;
@@ -152,6 +155,8 @@ module controller_exhaustive_tb ();
                     #1;
                 end
 
+                // Determine whether the outcome was correct or not
+                // Controller reports the game outcome, we compare if that is right based off of the hands
                 case (game_outcome)
                     2'd1: begin //Player win, player doesn't bust and (player exceeds house or house busts)
                         if (((player_sum_tb > house_sum_tb) || (house_sum_tb > 10'd21)) && (player_sum_tb <= 10'd21)) begin
@@ -178,8 +183,6 @@ module controller_exhaustive_tb ();
                     end
 
                 endcase
-
-                // Validate results
             end
 
             //Next seed

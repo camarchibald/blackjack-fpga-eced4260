@@ -3,16 +3,16 @@ onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -divider NADER_CAM
 add wave -noupdate -divider INTERNAL
-add wave -noupdate -label CLOCK                         /controller_exhaustive_tb/clk
+add wave -noupdate -label CLOCK /controller_exhaustive_tb/clk
 
 add wave -noupdate -divider BUTTONS
-add wave -noupdate -label RESET                         /controller_exhaustive_tb/rst
-add wave -noupdate -label START_GAME_BUTTON             /controller_exhaustive_tb/user_ready_to_begin
-add wave -noupdate -label HIT_BUTTON                    /controller_exhaustive_tb/hit
-add wave -noupdate -label STAND_BUTTON                  /controller_exhaustive_tb/stand
+add wave -noupdate -label RESET /controller_exhaustive_tb/rst
+add wave -noupdate -label START_GAME_BUTTON /controller_exhaustive_tb/user_ready_to_begin
+add wave -noupdate -label HIT_BUTTON /controller_exhaustive_tb/hit
+add wave -noupdate -label STAND_BUTTON /controller_exhaustive_tb/stand
 
 add wave -noupdate -divider SWITCHES
-add wave -noupdate -label SEED              /controller_exhaustive_tb/seed
+add wave -noupdate -label SEED /controller_exhaustive_tb/seed
 
 add wave -noupdate -divider LEDS
 add wave -noupdate -label GAME_OUTCOME /controller_exhaustive_tb/game_outcome
@@ -23,6 +23,8 @@ add wave -noupdate -label HOUSE_HAND -radix unsigned /controller_exhaustive_tb/h
 add wave -noupdate -label STATE -radix unsigned /controller_exhaustive_tb/state
 add wave -noupdate -label PLAYER_SUM -radix unsigned /controller_exhaustive_tb/player_sum_tb
 add wave -noupdate -label HOUSE_SUM -radix unsigned /controller_exhaustive_tb/house_sum_tb
+
+add wave -noupdate -divider TEST_RESULT
 add wave -noupdate -label CORRECT -radix unsigned /controller_exhaustive_tb/correct
 add wave -noupdate -label INCORRECT -radix unsigned /controller_exhaustive_tb/incorrect
 

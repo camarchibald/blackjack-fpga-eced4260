@@ -1,4 +1,4 @@
-# Controller testbench tcl file, Cameron Archibald B00893056, Nader Hdeib B00898627
+# Controller testbench tcl file, Nader Hdeib B00898627, Cameron Archibald B00893056
 # stop any simulation that is currently running
 quit -sim
 

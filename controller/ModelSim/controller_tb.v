@@ -1,9 +1,9 @@
 /*
-Author: Nader Hdeib
-Student ID: B00898627
+Author: Nader Hdeib, Cameron Archibald
+Student ID: B00898627, B00893056
 Date: November 22, 2025
 File Name: controller_tb.v
-Description: This file attempts to excercise a blackjack shuffle sequence.
+Description: This file executes a single game of blackjack
 */
 
 `timescale 1ns / 1ps
@@ -45,26 +45,36 @@ module controller_tb ();
         .hand_display_2(hand_display_2),
         .hand_display_3(hand_display_3),
         .hand_display_4(hand_display_4),
-        .hand_display_5(hand_display_5)
+        .hand_display_5(hand_display_5),
+        .hands()
     );
 
     // Main clock
     always #1 clk = ~clk;
 
-    // Deck shuffle testing
+    // Deck test sequence, vary the combinations of stand, hit to change how the player plays
     initial begin
         
-        // Begin the simulation
-        // Reset released after 3 clock cycles
-        #0 rst <= 1;
+        // Reset released after 5 clock cycles
+        #5 rst <= 1;
 
-        #700 user_ready_to_begin <= 0;      // Time = 700 ns 
-        #20 user_ready_to_begin <= 1;           // Time = 720 ns
-        #50 stand = 0;                            // Time = 770 ns
-        #20 stand = 1;                            // Time = 790 ns
-        //#100 hit = 0;                         // Time = 890 ns
-        //#20 hit = 1;                            // Time = 850 ns
-        hand_select = 0;
+        // Press start button
+        #700 user_ready_to_begin <= 0;       
+        #20 user_ready_to_begin <= 1; 
+
+        #50;
+        
+        // Press hit button (up to 3 times is possible)
+        //#20 hit = 0;                      
+        //#20 hit = 1; 
+        //#20 hit = 0;                      
+        //#20 hit = 1;  
+        //#20 hit = 0;                      
+        //#20 hit = 1;   
+        
+        // Press stand button
+        #20 stand = 0;                            
+        #20 stand = 1;                                   
     end
 	
 	
