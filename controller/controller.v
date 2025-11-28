@@ -44,12 +44,11 @@ module controller (
     parameter S_CP_HOUSE_HIT 	    = 5'b01101; // 13
     parameter S_CP_PLAYER_BUST      = 5'b01110; // 14
     parameter S_CP_HOUSE_BUST 	    = 5'b01111; // 15
-    parameter S_HOUSE_PLAY          = 5'b10000; // 16
-    parameter S_CHECK_PLAYER_BUST   = 5'b10001; // 17
-    parameter S_HOUSE_WIN           = 5'b10010; // 18
-    parameter S_PLAYER_WIN          = 5'b10011; // 19
-    parameter S_DRAW                = 5'b10100; // 20
-    parameter S_WINNER_OUTPUT       = 5'b10101; // 21
+    parameter S_CHECK_PLAYER_BUST   = 5'b10000; // 16
+    parameter S_HOUSE_WIN           = 5'b10001; // 17
+    parameter S_PLAYER_WIN          = 5'b10010; // 18
+    parameter S_DRAW                = 5'b10011; // 19
+    parameter S_WINNER_OUTPUT       = 5'b10100; // 20
 
     // Main FSM state register
     reg [4:0] state_r = S_RESET;
