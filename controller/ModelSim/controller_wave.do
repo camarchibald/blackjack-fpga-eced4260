@@ -2,6 +2,7 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 
+add wave -noupdate -divider NADER_CAM
 add wave -noupdate -divider MAIN_CONTROLLER
 add wave -noupdate -label CLOCK                         /controller_tb/clk
 add wave -noupdate -label RESET                         /controller_tb/rst

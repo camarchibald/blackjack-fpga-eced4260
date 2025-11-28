@@ -2,6 +2,7 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 
+add wave -noupdate -divider NADER_CAM
 add wave -noupdate -divider DECK_INOUT
 add wave -noupdate -label CLK /testbench/CLK
 add wave -noupdate -label RESET /testbench/RESET

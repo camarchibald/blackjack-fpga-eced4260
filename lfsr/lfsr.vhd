@@ -1,10 +1,11 @@
 ---------------------------------------------------
--- Author: Cameron Archibald
--- Student ID: B00893056
+-- Author: Cameron Archibald, Nader Hdeib
+-- Student ID: B00893056, B00898627
 -- Date: 2025-11-11
 -- File Name: lfsr.vhd
 -- Architecture: 
--- Description: Pseudo random number generator of 6 bits, using lfsr. 
+-- Description: Pseudo random number generator of 6 bits, using lfsr.
+-- 	Only want 0-51 so it shifts until the output is below 52
 -- Acknowledgements: https://docs.amd.com/v/u/en-US/xapp052, shows table of tap locations for various bits
 -------------------------------------------------
 LIBRARY IEEE;
@@ -24,8 +25,9 @@ ENTITY lfsr IS
 END ENTITY;
 
 ARCHITECTURE Behaviour OF lfsr IS
+	-- State starts at S_SET_START (need to load starting value)
 	TYPE STATE_T IS (S_SET_START, S_SETTING, S_SHIFT_SET_START, S_SHIFTING_RANDOM, S_SHIFTING_CHECK, S_SHIFTING_DONE);
-	SIGNAL STATE: STATE_T := S_SET_START; -- State starts at S_SET_START (need to load starting value)
+	SIGNAL STATE: STATE_T := S_SET_START; 
 
 	CONSTANT MAX: UNSIGNED(HIGH_BIT DOWNTO 0) := to_unsigned(51, HIGH_BIT + 1); -- Maximum value
 	CONSTANT INVALID_SEED: UNSIGNED(HIGH_BIT DOWNTO 0) := to_unsigned(63, HIGH_BIT + 1); -- If seed is 63 then it will not shift
@@ -33,25 +35,30 @@ ARCHITECTURE Behaviour OF lfsr IS
 BEGIN
 	PROCESS (CLK, RESET)
 	BEGIN
-		IF (RESET = '1') THEN -- Reset to first state
+	-- Reset to first state
+		IF (RESET = '1') THEN 
 			STATE <= S_SET_START;
 			SET_READY <= '1';
 		
 		ELSIF (rising_edge(CLK)) THEN
-			IF ((STATE = S_SET_START OR STATE = S_SHIFT_SET_START) AND SET_START = '1') THEN	-- Load starting value in, SET_READY low
+		-- Load starting value in, SET_READY low
+			IF ((STATE = S_SET_START OR STATE = S_SHIFT_SET_START) AND SET_START = '1') THEN	
 				STATE <= S_SETTING;
 				SET_READY <= '0';
 				OUTPUT <= SET_VAL;
 
-			ELSIF (STATE = S_SETTING AND SET_START = '0') THEN	-- Starting value loaded, SET_READY high
+		-- Starting value loaded, SET_READY high
+			ELSIF (STATE = S_SETTING AND SET_START = '0') THEN	
 				STATE <= S_SHIFT_SET_START;
 				SET_READY <= '1';
 
-			ELSIF (STATE = S_SHIFT_SET_START AND SHIFT_START = '1') THEN -- Shift the LFSR, SHIFT_READY low
+		-- Shift the LFSR, SHIFT_READY low
+			ELSIF (STATE = S_SHIFT_SET_START AND SHIFT_START = '1') THEN 
 				SHIFT_READY <= '0';
 				STATE <= S_SHIFTING_RANDOM;
 
-			ELSIF (STATE = S_SHIFTING_RANDOM) THEN -- Shift all by one, taps go into the first element
+		-- Shift all by one, taps go into the first element
+			ELSIF (STATE = S_SHIFTING_RANDOM) THEN 
 				STATE <= S_SHIFTING_CHECK;
 				OUTPUT(0) <= OUTPUT(5) XNOR OUTPUT(4); 
 				OUTPUT(1) <= OUTPUT(0);
@@ -59,8 +66,9 @@ BEGIN
 				OUTPUT(3) <= OUTPUT(2);
 				OUTPUT(4) <= OUTPUT(3);
 				OUTPUT(5) <= OUTPUT(4);
-				
-			ELSIF (STATE = S_SHIFTING_CHECK) THEN -- Check if over 51, need to do the random shift again, if equal to 63 (invalid seed) then flip one bit to zero and shift once
+		
+		-- Check if over 51, need to do the random shift again, if equal to 63 (invalid seed) then flip one bit to zero and shift once
+			ELSIF (STATE = S_SHIFTING_CHECK) THEN 
 				IF (UNSIGNED(OUTPUT) = INVALID_SEED) THEN
 					STATE <= S_SHIFTING_RANDOM;
 					OUTPUT(0) <= '0';
@@ -71,7 +79,8 @@ BEGIN
 					SHIFT_READY <= '1';
 				END IF;
 
-			ELSIF (STATE = S_SHIFTING_DONE AND SHIFT_START = '0') THEN -- Start signal low, ready for next shift or set
+		-- Start signal low, ready for next shift or set
+			ELSIF (STATE = S_SHIFTING_DONE AND SHIFT_START = '0') THEN 
 				STATE <= S_SHIFT_SET_START; 
 
 			END IF;

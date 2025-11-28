@@ -1,4 +1,4 @@
-# lfsr testbench tcl file, Cameron Archibald B00893056
+# lfsr testbench tcl file, Cameron Archibald B00893056, Nader Hdeib B00898627
 # stop any simulation that is currently running
 quit -sim
 
@@ -14,4 +14,4 @@ vsim work.testbench -Lf 220model -Lf altera_mf
 # show waveforms specified in wave.do
 do lfsr_wave.do
 # advance the simulation the desired amount of time
-run 3000 ns
+run 7000 ns

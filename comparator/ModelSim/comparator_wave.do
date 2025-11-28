@@ -2,6 +2,7 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 
+add wave -noupdate -divider NADER_CAM
 add wave -noupdate -divider COMPARATOR_INPUTS
 add wave -noupdate -label PLAYER_INPUT -radix unsigned /testbench/PLAYER_INPUT
 add wave -noupdate -label HOUSE_INPUT -radix unsigned /testbench/HOUSE_INPUT

@@ -1,6 +1,7 @@
 # Controller exhaustive testbench wave.do file, Cameron Archibald B00893056, Nader Hdeib B00898627
 onerror {resume}
 quietly WaveActivateNextPane {} 0
+add wave -noupdate -divider NADER_CAM
 add wave -noupdate -divider INTERNAL
 add wave -noupdate -label CLOCK                         /controller_exhaustive_tb/clk
 

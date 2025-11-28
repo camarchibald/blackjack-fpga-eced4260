@@ -2,6 +2,7 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 
+add wave -noupdate -divider NADER_CAM
 add wave -noupdate -divider ADDER_VALS
 add wave -noupdate -label CARD -radix unsigned /testbench/CARD
 add wave -noupdate -label RESET /testbench/RESET
