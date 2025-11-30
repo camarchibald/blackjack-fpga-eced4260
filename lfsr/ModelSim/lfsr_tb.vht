@@ -81,11 +81,11 @@ BEGIN
          ELSIF (STATE = S3 AND SHIFT_READY = '0') THEN
             STATE <= S4;
             SHIFT_START <= '0';
-      -- If shifted 70 times, reset, change seed and start again
+      -- If shifted 52 times, reset, change seed and start again
          ELSIF (STATE = S4 AND SHIFT_READY = '1') THEN
-            IF (COUNT > 70) THEN
+            IF (COUNT > 52) THEN
                COUNT <= 0;
-               SET_VAL <= "011010"; -- Change seed
+               SET_VAL <= "111111"; -- Change seed
                RESET <= '1';
                STATE <= S1;
             ELSE 
