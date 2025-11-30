@@ -96,8 +96,8 @@ BEGIN
       -- Before 10 iterations draw another card, else apply reset
          ELSIF (STATE = S5) THEN
             IF (COUNT > 10) THEN
-            -- If we've already reset twice, continue drawing cards to show overflow signal
-               IF (RESET_COUNT >= 2) THEN
+            -- If we've already reset once, continue drawing cards to show overflow signal
+               IF (RESET_COUNT >= 1) THEN
                   STATE <= S3;
                   COUNT <= COUNT + 1;
                ELSE 
