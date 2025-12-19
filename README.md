@@ -73,6 +73,8 @@ Here are a few examples of how the game runs.
 
 https://github.com/user-attachments/assets/f9c403fe-94dd-4271-8118-baf8212d4953
 
+</br>
+
 ### Seed 001010, player hits once, player win.
 - Player dealt 8 + 9 = 17, house dealt 2 + 4 = 6.
 - Player hits once then stands, getting 4 + 8 + 9 = 21.
@@ -80,6 +82,8 @@ https://github.com/user-attachments/assets/f9c403fe-94dd-4271-8118-baf8212d4953
 - Result is a player win (01) since house busted.
 
 https://github.com/user-attachments/assets/85dc36b8-6bd1-4ad9-92b4-a060974612b0
+
+</br>
 
 ### Seed 001010, player hits twice, house win.
 - Player dealt 8 + 9 = 17, house dealt 2 + 4 = 6.
@@ -89,6 +93,8 @@ https://github.com/user-attachments/assets/85dc36b8-6bd1-4ad9-92b4-a060974612b0
 
 https://github.com/user-attachments/assets/ba848a09-eb5f-45aa-9277-b0b15e77bb82
 
+</br>
+
 ### Seed 000010, player hits once, player win.
 - Player dealt J + 6 = 16, house dealt 8 + Q = 18.
 - Player hits once then stands, getting 3 + J + 6 = 19.
@@ -96,6 +102,8 @@ https://github.com/user-attachments/assets/ba848a09-eb5f-45aa-9277-b0b15e77bb82
 - Result is a player win (01) since player hand exceeds house hand.
 
 https://github.com/user-attachments/assets/cee0912d-3218-4826-9325-78bd86620407
+
+</br>
 
 ### Seed 000010, player hits twice, house win.
 - Player dealt J + 6 = 16, house dealt 8 + Q = 18.
